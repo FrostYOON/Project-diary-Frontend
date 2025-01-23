@@ -1,52 +1,50 @@
-# PROJECT-DIARY (프로젝트 일정 및 개인 일정 관리 시스템)
+# React + TypeScript + Vite
 
-## 개요
-이 프로젝트는 **프로젝트별 일정**, **개인 일정**, **일정 알림 기능**을 제공하는 관리 시스템입니다.  
-**Express**와 **React**를 기반으로 **TypeScript**로 개발되며, **MongoDB**를 사용하여 데이터를 관리합니다.  
-Google 인증 및 JWT를 통해 보안과 사용자 관리를 강화합니다.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
----
+Currently, two official plugins are available:
 
-## 주요 기능
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### 프로젝트별 일정 관리
-- 프로젝트의 세부 일정 생성 및 수정
-- 프로젝트별 일정 캘린더로 시각화
-- 프로젝트의 일정 보기
+## Expanding the ESLint configuration
 
-### 개인 일정 관리
-- 개인 일정 생성, 수정 및 삭제
-- 개인 일정 보기
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-### 일정 알림
-- 프로젝트 일정 시작, 일정 마감 임박, 일정 마감 알림
-- 프로젝트 일정 및 개인 일정 알림 관리
+- Configure the top-level `parserOptions` property like this:
 
----
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-## 기술 스택
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-### 프론트엔드
-- React
-- TypeScript
-- React-big-calendar
-- CSS 라이브러리 (디자인 최적화)
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-### 백엔드
-- Express
-- TypeScript
-- JWT 인증
-- Google OAuth
-
-### 데이터베이스
-- MongoDB
-
----
-
-## 버전 관리
-### 브랜치 전략
-- **main 브랜치**: 안정화된 코드 배포 (항시 유지)
-- **dev 브랜치**: 테스트 (항시 유지)
-- **feature 브랜치**: 기능 개발
-- **hotfix 브랜치**: 버그 수정
-
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
