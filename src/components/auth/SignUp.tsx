@@ -7,12 +7,14 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { useSignUpForm } from "../../features/auth/hooks/useSignUpForm";
-import { authService } from "../../features/auth/api/auth.api";
+import { useSignUpForm } from "../../hooks/useSignUpForm";
+import { authService } from "../../api/auth.api";
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
   const { formData, errors, handleChange, validateForm } = useSignUpForm();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ const SignUp = () => {
         const response = await authService.signup(signupData);
         localStorage.setItem('accessToken', response.accessToken);
         alert("회원가입이 완료되었습니다!");
-        window.location.href = '/';
+        navigate('/login');
       } catch (error) {
         console.error("회원가입 실패:", error);
         alert(
@@ -140,7 +142,7 @@ const SignUp = () => {
             fullWidth
             id="username"
             label="Name"
-            name="name"
+            name="username"
             value={formData.username}
             onChange={handleChange}
             error={!!errors.username}
@@ -165,7 +167,7 @@ const SignUp = () => {
             fullWidth
             id="phoneNumber"
             label="Phone"
-            name="phone"
+            name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
             error={!!errors.phoneNumber}
@@ -190,7 +192,7 @@ const SignUp = () => {
             fullWidth
             id="birthDate"
             label="Birth"
-            name="birth"
+            name="birthDate"
             type="date"
             value={formData.birthDate}
             onChange={handleChange}

@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { GlobalStyles } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
 
@@ -42,11 +43,16 @@ const App: React.FC = () => {
                 <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
               }
             />
+            <Route
+              path="/login"
+              element={
+                <LoginPage onFormFocus={() => setOverlayVisible(true)}/>} />
           </Routes>
         </RootLayout>
       </Router>
     </ThemeProvider>
   );
 };
+
 
 export default App;
