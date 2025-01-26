@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import React from 'react';
+import backgroundImage from '@/assets/images/background.png';  // 배경 이미지 import
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,11 @@ const RootLayout = ({ children, isOverlayVisible }: RootLayoutProps) => {
         width: '100%',
         height: '100vh',
         position: 'relative',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
         '&::before': {
           content: '""',
           position: 'fixed',
@@ -20,7 +26,7 @@ const RootLayout = ({ children, isOverlayVisible }: RootLayoutProps) => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url("/images/background.png")',
+          backgroundImage: 'url("/assets/images/background.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { GlobalStyles } from "@mui/material";
+import { GlobalStyles, Box, Typography } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
+import HeaderLayout from "./layouts/HeaderLayout";
 
 const theme = createTheme({
   palette: {
@@ -35,24 +36,41 @@ const App: React.FC = () => {
         }}
       />
       <Router>
-        <RootLayout isOverlayVisible={isOverlayVisible}>
-          <Routes>
-            <Route
-              path="/signup"
-              element={
+        <Routes>
+          {/* 루트 경로에 직접 HeaderLayout과 임시 컨텐츠 추가 */}
+          <Route
+            path="/"
+            element={
+              <HeaderLayout>
+                <Box sx={{ padding: 3 }}>
+                  <Typography variant="h4" component="h1" gutterBottom>
+                    임시 메인 페이지
+                  </Typography>
+                </Box>
+              </HeaderLayout>
+            }
+          />
+          
+          <Route
+            path="/signup"
+            element={
+              <RootLayout isOverlayVisible={isOverlayVisible}>
                 <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                <LoginPage onFormFocus={() => setOverlayVisible(true)}/>} />
-          </Routes>
-        </RootLayout>
+              </RootLayout>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <RootLayout isOverlayVisible={isOverlayVisible}>
+                <LoginPage onFormFocus={() => setOverlayVisible(true)} />
+              </RootLayout>
+            }
+          />
+        </Routes>
       </Router>
     </ThemeProvider>
   );
 };
-
 
 export default App;
