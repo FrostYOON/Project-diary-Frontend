@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
-import google_icon from '../../../public/images/google_icon.png';
+import google_icon from '@/assets/images/google_icon.png';
 import { Container, Paper, Typography } from '@mui/material';
 
 export const Login = () => {
