@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { SignUpFormData } from '../types/auth.types';
+import { SignUpFormData, LoginCredentials, AuthResponse } from '../types/auth.types';
+import { axiosInstance } from './axios.config';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -35,4 +36,22 @@ export const authService = {
       throw error;
     }
   }
+};
+
+export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  try {
+    const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || '로그인에 실패했습니다.');
+    }
+    throw error;
+  }
+};
+
+export const googleLogin = async (token: string): Promise<AuthResponse> => {
+  const response = await axiosInstance.post<AuthResponse>('/auth/google', { token });
+  return response.data;
 }; 
+
