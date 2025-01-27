@@ -10,9 +10,19 @@ const MainPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // 토큰 존재 여부로 로그인 상태 확인
-    const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(!!token);
+    // URL에서 토큰 파라미터 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('accessToken');
+    
+    if (accessToken) {
+      // localStorage에 토큰 저장
+      localStorage.setItem('accessToken', accessToken);
+      // URL에서 토큰 제거
+      window.history.replaceState({}, document.title, '/');
+    }
+
+    // 로그인 상태 확인
+    setIsLoggedIn(!!localStorage.getItem('accessToken'));
   }, []);
 
   return (
