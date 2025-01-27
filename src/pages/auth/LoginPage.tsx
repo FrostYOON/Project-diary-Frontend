@@ -8,7 +8,7 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ onFormFocus }) => {
   useEffect(() => {
-    onFormFocus(); // 페이지 로드 시 오버레이 활성화
+    onFormFocus();
   }, [onFormFocus]);
 
   return (
