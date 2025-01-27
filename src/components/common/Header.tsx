@@ -101,8 +101,8 @@ const Header = () => {
         alignItems: 'center',
         justifyContent: 'flex-end',  // 전체 컨텐츠 오른쪽 정렬
         padding: '12px 24px',
-        backgroundColor: '#fff',
-        borderBottom: '1px solid #e0e0e0',
+        backgroundColor: 'transparent',  // 배경색 투명으로 변경
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',  // 테두리도 반투명하게 수정
         position: 'sticky',
         top: 0,
         zIndex: 1000,

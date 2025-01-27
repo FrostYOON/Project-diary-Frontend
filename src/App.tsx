@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { GlobalStyles, Box, Typography } from "@mui/material";
+import { GlobalStyles } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
-import HeaderLayout from "./layouts/HeaderLayout";
 
 const theme = createTheme({
   palette: {
@@ -38,19 +38,8 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           {/* 루트 경로에 직접 HeaderLayout과 임시 컨텐츠 추가 */}
-          <Route
-            path="/"
-            element={
-              <HeaderLayout>
-                <Box sx={{ padding: 3 }}>
-                  <Typography variant="h4" component="h1" gutterBottom>
-                    임시 메인 페이지
-                  </Typography>
-                </Box>
-              </HeaderLayout>
-            }
-          />
-          
+          <Route path="/" element={<MainPage />} />
+
           <Route
             path="/signup"
             element={
