@@ -50,8 +50,5 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   }
 };
 
-export const googleLogin = async (token: string): Promise<AuthResponse> => {
-  const response = await axiosInstance.post<AuthResponse>('/auth/google', { token });
-  return response.data;
-}; 
+// googleLogin 함수 제거
 

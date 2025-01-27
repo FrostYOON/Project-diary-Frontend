@@ -34,8 +34,8 @@ const Navbar = () => {
 
   useEffect(() => {
     // 토큰 존재 여부로 로그인 상태 확인
-    const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(!!token);
+    const accessToken = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!accessToken);
   }, [location]); // 페이지 변경시마다 체크
 
   const handleLogout = () => {

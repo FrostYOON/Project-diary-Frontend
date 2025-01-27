@@ -7,6 +7,7 @@ import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
+import AuthCallback from './pages/auth/AuthCallback';
 
 const theme = createTheme({
   palette: {
@@ -56,6 +57,7 @@ const App: React.FC = () => {
               </RootLayout>
             }
           />
+          <Route path="/auth/callback" element={<AuthCallback />} />
         </Routes>
       </Router>
     </ThemeProvider>
