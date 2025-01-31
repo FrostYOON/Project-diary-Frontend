@@ -9,7 +9,7 @@ import { useTaskTable } from '../../hooks/tasks/useTaskTable';
 import { TaskFormData } from '../../types/task.types';
 import Header from '../../components/common/Header';
 import Navbar from '../../components/common/Navbar';
-import { userApi } from '../../api/user.api';
+import { axiosInstance } from '../../api/axios.config';
 
 const PersonalTaskPage = () => {
   const {
@@ -29,8 +29,7 @@ const PersonalTaskPage = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await userApi.getCurrentUser();
-        
+        const response = await axiosInstance.get('/users/me');
         setUserId(response.data.data.user._id);
         setDepartmentId(response.data.data.user.department);
       } catch (error) {

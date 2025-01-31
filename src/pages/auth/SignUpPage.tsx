@@ -18,4 +18,4 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onFormFocus }) => {
   );
 };
 
-export default SignUpPage; 
+export default SignUpPage;
