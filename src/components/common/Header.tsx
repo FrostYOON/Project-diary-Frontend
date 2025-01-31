@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import { WeatherInfo, CityNameMap } from '../../types/weather.types';
@@ -8,6 +8,7 @@ const Header = () => {
   const [currentWeatherIndex, setCurrentWeatherIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState<string>('');
   const [position, setPosition] = useState(0);  // 슬라이드 위치 상태
+  const initialFetchRef = useRef(false);
 
   // 도시 이름 한글 변환 맵
   const cityNameKR: CityNameMap = {
@@ -42,35 +43,40 @@ const Header = () => {
 
   // 날씨 정보 순환 
   const rotateWeather = useCallback(() => {
-    setPosition(-100);  // 현재 날씨를 위로 슬라이드
+    setPosition(-100);
     
     setTimeout(() => {
       setCurrentWeatherIndex(prev => 
-        prev === weatherList.length - 1 ? 0 : prev + 1
+        prev === (weatherList?.length ?? 0) - 1 ? 0 : prev + 1
       );
-      setPosition(100);  // 새로운 날씨를 아래에 위치
+      setPosition(100);
       
       requestAnimationFrame(() => {
         setTimeout(() => {
-          setPosition(0);  // 새로운 날씨를 원래 위치로 슬라이드
+          setPosition(0);
         }, 50);
       });
     }, 500);
-  }, [weatherList.length]);
+  }, [weatherList]);
 
   useEffect(() => {
-    // 초기 데이터 로드
-    fetchWeather();
+    if (initialFetchRef.current) return;
+    initialFetchRef.current = true;
 
-    // 5분마다 날씨 정보 업데이트
-    const weatherFetchInterval = setInterval(fetchWeather, 300000);
+    let weatherFetchInterval: NodeJS.Timeout;
+    let rotationInterval: NodeJS.Timeout;
 
-    // 5초마다 다음 도시 날씨로 전환
-    const rotationInterval = setInterval(rotateWeather, 5000);
+    const initWeather = async () => {
+      await fetchWeather();
+      weatherFetchInterval = setInterval(fetchWeather, 300000);
+      rotationInterval = setInterval(rotateWeather, 5000);
+    };
+
+    initWeather();
 
     return () => {
-      clearInterval(weatherFetchInterval);
-      clearInterval(rotationInterval);
+      if (weatherFetchInterval) clearInterval(weatherFetchInterval);
+      if (rotationInterval) clearInterval(rotationInterval);
     };
   }, [rotateWeather]);
 
