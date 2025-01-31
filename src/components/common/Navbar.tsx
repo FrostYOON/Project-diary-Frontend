@@ -70,7 +70,7 @@ const Navbar = () => {
     const mainMenuItems: MenuItem[] = [
       { text: '프로젝트 현황', icon: <CalendarMonthIcon />, path: '/projectCalendar' },
       { text: '프로젝트 목록', icon: <ListAltIcon />, path: '/projects' },
-      { text: '개인 목록', icon: <ListIcon />, path: '/tasks' },
+      { text: '업무 목록', icon: <ListIcon />, path: '/tasks' },
     ];
 
     const bottomMenuItems: MenuItem[] = isLoggedIn ? [
