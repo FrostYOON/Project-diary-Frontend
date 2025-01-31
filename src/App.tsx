@@ -8,6 +8,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
 import AuthCallback from './pages/auth/AuthCallback';
+import ProjectListPage from "./pages/projects/ProjectListPage";
+// import ProjectDetailPage from "./pages/projects/ProjectDetailPage";
 
 const theme = createTheme({
   palette: {
@@ -58,6 +60,7 @@ const App: React.FC = () => {
             }
           />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/projects" element={<ProjectListPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
