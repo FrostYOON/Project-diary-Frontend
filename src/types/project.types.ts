@@ -1,16 +1,16 @@
 export interface Project {
   _id: string;
   title: string;
-  department: string | { _id: string; name: string };
+  department: { _id: string; name: string } | string;
   description: string;
   startDate: string;
   endDate: string;
   status: '준비' | '진행중' | '완료' | '보류';
   createdAt: string;
   updatedAt: string;
-  author: string | { _id: string; name: string };
+  author: { _id: string; name: string } | string;
   progress: number;
-  members: string[] | { _id: string; name: string }[];
+  members: Array<{ _id: string; name: string }> | string[];
 }
 
 export interface ProjectResponse {

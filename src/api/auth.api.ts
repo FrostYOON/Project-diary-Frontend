@@ -14,8 +14,6 @@ export const authService = {
         name: userData.username,    // username을 name으로 변경
         phone: userData.phoneNumber.replace(/-/g, ''),  // phoneNumber를 phone으로 변경
         birth: userData.birthDate,  // birthDate를 birth로 변경
-        department: 'other',
-        role: 'user'
       };
       
       console.log('Sending signup data:', signupData);
@@ -49,6 +47,4 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     throw error;
   }
 };
-
-// googleLogin 함수 제거
 

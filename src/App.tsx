@@ -9,7 +9,7 @@ import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
 import AuthCallback from './pages/auth/AuthCallback';
 import ProjectListPage from "./pages/projects/ProjectListPage";
-// import ProjectDetailPage from "./pages/projects/ProjectDetailPage";
+import PersonalTaskPage from './pages/tasks/PersonalTaskPage';
 
 const theme = createTheme({
   palette: {
@@ -60,7 +60,22 @@ const App: React.FC = () => {
             }
           />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/projects" element={<ProjectListPage />} />
+          <Route 
+            path="/projects" 
+            element={
+              <RootLayout isOverlayVisible={false}>
+                <ProjectListPage />
+              </RootLayout>
+            } 
+          />
+          <Route 
+            path="/tasks" 
+            element={
+              <RootLayout isOverlayVisible={false}>
+                <PersonalTaskPage />
+              </RootLayout>
+            } 
+          />
         </Routes>
       </Router>
     </ThemeProvider>

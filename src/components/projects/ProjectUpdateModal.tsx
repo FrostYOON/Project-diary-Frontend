@@ -26,7 +26,7 @@ interface ProjectDetailModalProps {
 }
 
 const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetailModalProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [formData, setFormData] = useState<Partial<Project>>(project || {});
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
 
@@ -35,7 +35,7 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
     try {
       await updateProject(project._id, formData);
       onSuccess();
-      setIsEditing(false);
+      setIsEditing(true);
     } catch (error) {
       console.error('프로젝트 수정 실패:', error);
       alert('프로젝트 수정에 실패했습니다.');

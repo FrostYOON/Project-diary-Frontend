@@ -28,7 +28,6 @@ export const useAuth = () => {
       
       if (response.success && response.accessToken) {
         localStorage.setItem('accessToken', response.accessToken);
-        alert('로그인 되었습니다.');
         navigate('/');
       } else {
         throw new Error('로그인에 실패했습니다.');

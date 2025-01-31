@@ -1,40 +1,34 @@
-import { Box, Container } from '@mui/material';
-import backgroundImage from '@/assets/images/background.png';
+import { Box } from '@mui/material';
 import Header from '../components/common/Header';
 import Navbar from '../components/common/Navbar';
 
 interface ProjectLayoutProps {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
 const ProjectLayout = ({ children }: ProjectLayoutProps) => {
-  return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Header />
-      <Navbar />
-      <Container 
-        maxWidth="xl" 
-        sx={{ 
-          flex: 1,
-          mt: 3,
-          mb: 3,
-        }}
-      >
-        {children}
-      </Container>
-    </Box>
-  );
+    return (
+        <Box
+            sx={{
+                position: 'relative',
+                width: '95%',
+                margin: '0 auto',
+            }}
+        >
+            <Header />
+            <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <Navbar />
+                <Box sx={{ 
+                    flex: 1, 
+                    overflow: 'auto', 
+                    width: '100%',
+                    height: 'calc(100vh - 63px)',
+                }}>
+                    {children}
+                </Box>
+            </Box>
+        </Box>
+    );
 };
 
 export default ProjectLayout; 
