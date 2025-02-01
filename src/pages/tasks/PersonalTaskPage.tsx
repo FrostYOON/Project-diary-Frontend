@@ -7,8 +7,6 @@ import TaskAddModal from '../../components/tasks/TaskAddModal';
 import TaskEditModal from '../../components/tasks/TaskEditModal';
 import { useTaskTable } from '../../hooks/tasks/useTaskTable';
 import { TaskFormData } from '../../types/task.types';
-import Header from '../../components/common/Header';
-import Navbar from '../../components/common/Navbar';
 import { axiosInstance } from '../../api/axios.config';
 
 const PersonalTaskPage = () => {
@@ -80,61 +78,44 @@ const PersonalTaskPage = () => {
   };
 
   return (
-    <Box 
-      sx={{ 
-        width: '95%',
-        position: 'relative',
-        margin: '0 auto',
-      }}
-    >
-      <Header />
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Navbar />
-        <Box 
-          sx={{ 
-            flex: 1, 
-            overflow: 'auto', 
-            width: '100%',
-            height: 'calc(100vh - 63px)',
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h5" fontWeight="bold">개인 업무</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{
+            backgroundColor: '#F4A261',
+            '&:hover': {
+              backgroundColor: '#E76F51',
+            },
           }}
+          onClick={handleAddTask}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="h5" fontWeight="bold">개인 업무 목록</Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleAddTask}
-              sx={{ borderRadius: 2 }}
-            >
-              업무 추가
-            </Button>
-          </Box>
-
-          <TaskTable
-            tasks={tasks}
-            loading={loading}
-            onEdit={handleEditTask}
-          />
-
-          <TaskAddModal
-            open={openAddModal}
-            onClose={() => setOpenAddModal(false)}
-            onSubmit={handleSubmitAdd}
-            userId={userId}
-            departmentId={departmentId}
-          />
-
-          <TaskEditModal
-            open={openEditModal}
-            onClose={() => setOpenEditModal(false)}
-            task={selectedTask}
-            onSubmit={handleUpdateTask}
-            onDelete={handleDelete}
-            userId={userId}
-            departmentId={departmentId}
-          />
-        </Box>
+          업무 추가
+        </Button>
       </Box>
+      <TaskTable
+        tasks={tasks}
+        loading={loading}
+        onEdit={handleEditTask}
+      />
+      <TaskAddModal
+        open={openAddModal}
+        onClose={() => setOpenAddModal(false)}
+        onSubmit={handleSubmitAdd}
+        userId={userId}
+        departmentId={departmentId}
+      />
+      <TaskEditModal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        task={selectedTask}
+        onSubmit={handleUpdateTask}
+        onDelete={handleDelete}
+        userId={userId}
+        departmentId={departmentId}
+      />
     </Box>
   );
 };

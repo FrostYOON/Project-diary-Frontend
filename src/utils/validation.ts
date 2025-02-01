@@ -4,7 +4,7 @@ export const validateSignUpForm = (formData: SignUpFormData): Partial<SignUpForm
   const errors: Partial<SignUpFormData> = {};
 
   // 이메일 검증
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(formData.email)) {
     errors.email = "유효한 이메일 주소를 입력해주세요 (예: example@example.com)";
   }
@@ -26,13 +26,13 @@ export const validateSignUpForm = (formData: SignUpFormData): Partial<SignUpForm
   }
 
   // 전화번호 검증
-  const phoneRegex = /^\d{3}-\d{3,4}-\d{4}$/;
+  const phoneRegex = /^(01[016789])-?([0-9]{3,4})-?([0-9]{4})$/;
   if (!phoneRegex.test(formData.phoneNumber)) {
     errors.phoneNumber = "유효한 전화번호를 입력해주세요 (예: 010-1234-5678)";
   }
 
   // 생년월일 검증
-  const birthDateRegex = /^(20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  const birthDateRegex = /^(19|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
   if (!birthDateRegex.test(formData.birthDate)) {
     errors.birthDate = "유효한 생년월일을 입력해주세요 (예: 2000-01-01)";
   }
