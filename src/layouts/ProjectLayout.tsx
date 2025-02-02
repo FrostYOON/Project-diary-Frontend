@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import Header from '../components/common/Header';
-import Navbar from '../components/common/Navbar';
 
 interface ProjectLayoutProps {
     children: React.ReactNode;
@@ -17,7 +16,6 @@ const ProjectLayout = ({ children }: ProjectLayoutProps) => {
         >
             <Header />
             <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                <Navbar />
                 <Box sx={{ 
                     flex: 1, 
                     overflow: 'auto', 

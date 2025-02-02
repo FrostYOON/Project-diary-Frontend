@@ -10,6 +10,9 @@ import RootLayout from "./layouts/RootLayout";
 import AuthCallback from './pages/auth/AuthCallback';
 import ProjectListPage from "./pages/projects/ProjectListPage";
 import PersonalTaskPage from './pages/tasks/PersonalTaskPage';
+import AppLayout from './layouts/AppLayout';
+import AuthLayout from './layouts/AuthLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const theme = createTheme({
   palette: {
@@ -40,41 +43,49 @@ const App: React.FC = () => {
       />
       <Router>
         <Routes>
-          {/* 루트 경로에 직접 HeaderLayout과 임시 컨텐츠 추가 */}
           <Route path="/" element={<MainPage />} />
-
-          <Route
-            path="/signup"
-            element={
-              <RootLayout isOverlayVisible={isOverlayVisible}>
-                <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
-              </RootLayout>
-            }
-          />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          
           <Route
             path="/login"
             element={
               <RootLayout isOverlayVisible={isOverlayVisible}>
-                <LoginPage onFormFocus={() => setOverlayVisible(true)} />
+                <AuthLayout>
+                  <LoginPage onFormFocus={() => setOverlayVisible(true)} />
+                </AuthLayout>
               </RootLayout>
             }
           />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route 
-            path="/projects" 
+          <Route
+            path="/signup"
             element={
-              <RootLayout isOverlayVisible={false}>
-                <ProjectListPage />
+              <RootLayout isOverlayVisible={isOverlayVisible}>
+                <AuthLayout>
+                  <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
+                </AuthLayout>
               </RootLayout>
-            } 
+            }
           />
-          <Route 
-            path="/tasks" 
+          
+          <Route
+            path="/projects"
             element={
-              <RootLayout isOverlayVisible={false}>
-                <PersonalTaskPage />
-              </RootLayout>
-            } 
+              <ProtectedRoute>
+                <AppLayout>
+                  <ProjectListPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PersonalTaskPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </Router>
