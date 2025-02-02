@@ -24,7 +24,11 @@ import {
   StyledListItem, 
 } from '../../styles/navbar.styles';
 
-const Navbar = () => {
+interface NavbarProps {
+  onOpenChange: (open: boolean) => void;
+}
+
+const Navbar = ({ onOpenChange }: NavbarProps) => {
   const [open, setOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const theme = useTheme();
@@ -37,6 +41,10 @@ const Navbar = () => {
     const accessToken = localStorage.getItem('accessToken');
     setIsLoggedIn(!!accessToken);
   }, [location]); // 페이지 변경시마다 체크
+
+  useEffect(() => {
+    onOpenChange(open);
+  }, [open, onOpenChange]);
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');

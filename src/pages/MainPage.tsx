@@ -1,10 +1,8 @@
-import { Box, Container } from '@mui/material';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import backgroundImage from '@/assets/images/background.png';
 import logo from '../assets/images/logo.png';
-import Navbar from '../components/common/Navbar';
-import Header from '../components/common/Header';
+import RootLayout from '../layouts/RootLayout';
+import AppLayout from '../layouts/AppLayout';
 
 const MainPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,54 +13,42 @@ const MainPage = () => {
     const accessToken = urlParams.get('accessToken');
     
     if (accessToken) {
-      // localStorage에 토큰 저장
       localStorage.setItem('accessToken', accessToken);
-      // URL에서 토큰 제거
       window.history.replaceState({}, document.title, '/');
     }
 
-    // 로그인 상태 확인
     setIsLoggedIn(!!localStorage.getItem('accessToken'));
   }, []);
 
-  return (
-    <PageContainer>
-      <Box
-        sx={{
-          minHeight: '100vh',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {isLoggedIn && <Header />}
-        <Navbar />
-        <Container 
-          maxWidth="xl" 
-          sx={{ 
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <LogoContainer>
-            <Logo src={logo} alt="logo" />
-          </LogoContainer>
-        </Container>
-      </Box>
-    </PageContainer>
+  const MainContent = () => (
+    <CenteredContainer>
+      <LogoContainer>
+        <Logo src={logo} alt="logo" />
+      </LogoContainer>
+    </CenteredContainer>
+  );
+
+  return isLoggedIn ? (
+    <AppLayout>
+      <MainContent />
+    </AppLayout>
+  ) : (
+    <RootLayout isOverlayVisible={false}>
+      <MainContent />
+    </RootLayout>
   );
 };
 
-const PageContainer = styled.div`
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
+const CenteredContainer = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
 `;
 
 const LogoContainer = styled.div`
@@ -72,8 +58,14 @@ const LogoContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  max-width: 600px;
+  width: 300px;
   height: auto;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 export default MainPage;

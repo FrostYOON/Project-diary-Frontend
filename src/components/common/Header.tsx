@@ -1,45 +1,40 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import axios from 'axios';
-import { WeatherInfo, CityNameMap } from '../../types/weather.types';
+import { WeatherInfo } from '../../types/weather.types';
+import { CITY_NAME_KR, WEATHER_CONFIG, WEATHER_API } from '../../constants/weathers';
 
 const Header = () => {
   const [weatherList, setWeatherList] = useState<WeatherInfo[]>([]);
   const [currentWeatherIndex, setCurrentWeatherIndex] = useState(0);
-  const [currentTime, setCurrentTime] = useState<string>('');
-  const [position, setPosition] = useState(0);  // 슬라이드 위치 상태
-  const initialFetchRef = useRef(false);
+  const [position, setPosition] = useState(0);
+  const [currentTime, setCurrentTime] = useState('');
+  // const [open, setOpen] = useState(false);
+  
+  const initialized = useRef(false);
+  // const lastFetchTime = useRef(0);
 
-  // 도시 이름 한글 변환 맵
-  const cityNameKR: CityNameMap = {
-    'Seoul': '서울',
-    'Incheon': '인천',
-    'Suwon': '수원',
-    'Seongnam': '성남',
-    'Goyang': '고양',
-    'Yongin': '용인',
-    'Gimpo': '김포',
-    'Hanam': '하남',
-    'Busan': '부산',
-    'Daegu': '대구',
-    'Daejeon': '대전',
-    'Gwangju': '광주',
-    'Ulsan': '울산',
-    'Sejong': '세종',
-    'Jeonju': '전주'
-  };
-
-  // 날씨 정보 가져오기
-  const fetchWeather = async () => {
+  const fetchWeather = useCallback(async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/weather`);
-      if (response.data.success && response.data.data.length > 0) {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}${WEATHER_API.ENDPOINT}`);
+      if (response.data.success && response.data.data?.length > 0) {
         setWeatherList(response.data.data);
       }
     } catch (error) {
       console.error('날씨 정보 조회 실패:', error);
     }
-  };
+  }, []);
+
+  // 초기화 및 인터벌 설정
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      fetchWeather(); // 즉시 첫 데이터 로드
+    }
+
+    const interval = setInterval(fetchWeather, WEATHER_CONFIG.FETCH_INTERVAL);
+    return () => clearInterval(interval);
+  }, [fetchWeather]);
 
   // 날씨 정보 순환 
   const rotateWeather = useCallback(() => {
@@ -54,31 +49,15 @@ const Header = () => {
       requestAnimationFrame(() => {
         setTimeout(() => {
           setPosition(0);
-        }, 50);
+        }, WEATHER_CONFIG.TRANSITION_DELAY);
       });
-    }, 500);
+    }, WEATHER_CONFIG.SLIDE_DURATION);
   }, [weatherList]);
 
-  useEffect(() => {
-    if (initialFetchRef.current) return;
-    initialFetchRef.current = true;
-
-    let weatherFetchInterval: NodeJS.Timeout;
-    let rotationInterval: NodeJS.Timeout;
-
-    const initWeather = async () => {
-      await fetchWeather();
-      weatherFetchInterval = setInterval(fetchWeather, 300000);
-      rotationInterval = setInterval(rotateWeather, 5000);
-    };
-
-    initWeather();
-
-    return () => {
-      if (weatherFetchInterval) clearInterval(weatherFetchInterval);
-      if (rotationInterval) clearInterval(rotationInterval);
-    };
-  }, [rotateWeather]);
+  // // weatherList 변경 확인용 디버깅
+  // useEffect(() => {
+  //   console.log('현재 weatherList:', weatherList);
+  // }, [weatherList]);
 
   // 현재 시간 관리
   const updateTime = () => {
@@ -99,6 +78,13 @@ const Header = () => {
     const timeInterval = setInterval(updateTime, 1000);
     return () => clearInterval(timeInterval);
   }, []);
+
+  // 날씨 순환 인터벌 설정
+  useEffect(() => {
+    if (weatherList.length === 0) return;
+    const rotationInterval = setInterval(rotateWeather, WEATHER_CONFIG.ROTATION_INTERVAL);
+    return () => clearInterval(rotationInterval);
+  }, [weatherList, rotateWeather]);
 
   return (
     <Box
@@ -138,7 +124,7 @@ const Header = () => {
             }}
           >
             <img
-              src={`https://openweathermap.org/img/w/${weatherList[currentWeatherIndex].icon}.png`}
+              src={`${WEATHER_API.ICON_URL}/${weatherList[currentWeatherIndex].icon}.png`}
               alt={weatherList[currentWeatherIndex].description}
               style={{ width: 30, height: 30 }}
             />
@@ -147,7 +133,7 @@ const Header = () => {
               fontWeight: 500,
               color: '#2c3e50'
             }}>
-              {cityNameKR[weatherList[currentWeatherIndex].city] || weatherList[currentWeatherIndex].city} {weatherList[currentWeatherIndex].temp}°C
+              {CITY_NAME_KR[weatherList[currentWeatherIndex].city] || weatherList[currentWeatherIndex].city} {weatherList[currentWeatherIndex].temp}°C
             </Typography>
           </Box>
         )}
