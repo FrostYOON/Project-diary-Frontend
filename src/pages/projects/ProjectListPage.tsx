@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, LinearProgress, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Typography, Chip } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import { getProjects } from '../../api/project.api';
@@ -103,7 +103,7 @@ const ProjectListPage = () => {
     },
     {
       field: 'remainingDays',
-      headerName: '남은일자',
+      headerName: '잔여일',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -113,6 +113,33 @@ const ProjectListPage = () => {
         const today = new Date();
         const diffTime = endDate.getTime() - today.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+          return (
+            <Chip 
+              label="만료" 
+              size="small"
+              sx={{ 
+                backgroundColor: '#ff4d4f',
+                color: 'white',
+                fontWeight: 500
+              }}
+            />
+          );
+        } else if (diffDays <= 1) {
+          return (
+            <Chip 
+              label="마감임박" 
+              size="small"
+              sx={{ 
+                backgroundColor: '#faad14',
+                color: 'white',
+                fontWeight: 500
+              }}
+            />
+          );
+        }
+
         return `${diffDays}일`;
       },
     },
