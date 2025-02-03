@@ -79,21 +79,30 @@ const PersonalTaskPage = () => {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5" fontWeight="bold">개인 업무</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          sx={{
-            backgroundColor: '#F4A261',
-            '&:hover': {
-              backgroundColor: '#E76F51',
-            },
-          }}
-          onClick={handleAddTask}
-        >
-          업무 추가
-        </Button>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        mb: 2
+      }}>
+        <Box sx={{ flex: 1 }} />
+        <Typography variant="h4" sx={{ flex: 1, textAlign: 'center' }}>업무 목록</Typography>
+        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              backgroundColor: '#F4A261',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#E76F51',
+              },
+            }}
+            onClick={handleAddTask}
+          >
+            업무 추가
+          </Button>
+        </Box>
       </Box>
       <TaskTable
         tasks={tasks}
