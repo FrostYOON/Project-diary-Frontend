@@ -14,9 +14,13 @@ export interface LoginCredentials {
 
 export interface AuthResponse {
   success: boolean;
-  user: {
-    id: string;
-    email: string;
+  message: string;
+  data: {
+    accessToken: string;
+    user: {
+      id: string;
+      email: string;
+      // ... 기타 사용자 정보 필드
+    };
   };
-  accessToken: string;
 } 

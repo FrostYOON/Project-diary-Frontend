@@ -8,7 +8,6 @@ import { Project } from '../../types/project.types';
 import CreateProjectModal from '../../components/projects/CreateProjectModal';
 import ProjectUpdateModal from '../../components/projects/ProjectUpdateModal';
 import { retryRequest } from '../../utils/api.utils';
-import ProjectLayout from '../../layouts/ProjectLayout';
 
 const ProjectListPage = () => {
   const navigate = useNavigate();
@@ -151,68 +150,63 @@ const ProjectListPage = () => {
   };
 
   return (
-    <ProjectLayout>
     <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h5" fontWeight="bold">프로젝트 목록</Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setIsModalOpen(true)}
-            sx={{
-              backgroundColor: '#F4A261',
-              '&:hover': {
-                backgroundColor: '#E76F51',
-              },
-            }}
-          >
-            프로젝트 생성
-          </Button>
-        </Box>
-        <Box sx={{ width: '100%', height: 'calc(100vh - 140px)' }}>
-            <DataGrid
-                rows={projects || []}
-                columns={columns}
-                loading={isLoading}
-                getRowId={(row: Project) => row._id}
-                onRowClick={(params) => setSelectedProject(params.row)}
-                pageSizeOptions={[10, 25, 50]}
-                initialState={{
-                pagination: { paginationModel: { pageSize: 10 } },
-                sorting: {
-                    sortModel: [{ field: 'endDate', sort: 'asc' }],
-                }
-                }}
-                disableRowSelectionOnClick
-                disableColumnMenu
-                sx={{ 
-                bgcolor: 'white', 
-                borderRadius: 2,
-                width: '100%',
-                '& .hidden-column': {
-                    display: 'none'
-                },
-                '& .MuiDataGrid-cell': {
-                    borderColor: 'grey.200',
-                    textAlign: 'center',
-                    justifyContent: 'center'
-                },
-                '& .MuiDataGrid-row:hover': {
-                    cursor: 'pointer',
-                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                },
-                '& .MuiDataGrid-columnHeaders': {
-                    borderRadius: '8px 8px 0 0',
-                    textAlign: 'center',
-                },
-                '& .MuiDataGrid-columnHeader': {
-                    backgroundColor: '#D4A373',
-                    color: '#ffffff',
-                    fontWeight: 'bold',
-                }
-                }}
-            />
-    </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h5" fontWeight="bold">프로젝트 목록</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setIsModalOpen(true)}
+          sx={{
+            backgroundColor: '#F4A261',
+            '&:hover': {
+              backgroundColor: '#E76F51',
+            },
+          }}
+        >
+          프로젝트 생성
+        </Button>
+      </Box>
+      <Box sx={{ width: '100%', height: 'calc(100vh - 140px)' }}>
+        <DataGrid
+          rows={projects || []}
+          columns={columns}
+          loading={isLoading}
+          getRowId={(row: Project) => row._id}
+          onRowClick={(params) => setSelectedProject(params.row)}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+            sorting: {
+              sortModel: [{ field: 'endDate', sort: 'asc' }],
+            }
+          }}
+          disableRowSelectionOnClick
+          disableColumnMenu
+          sx={{ 
+            bgcolor: 'white', 
+            borderRadius: 2,
+            width: '100%',
+            '& .MuiDataGrid-cell': {
+              borderColor: 'grey.200',
+              textAlign: 'center',
+              justifyContent: 'center'
+            },
+            '& .MuiDataGrid-row:hover': {
+              cursor: 'pointer',
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              borderRadius: '8px 8px 0 0',
+              textAlign: 'center',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D4A373',
+              color: '#ffffff',
+              fontWeight: 'bold',
+            }
+          }}
+        />
       </Box>
       <CreateProjectModal
         open={isModalOpen}
@@ -227,7 +221,7 @@ const ProjectListPage = () => {
         project={selectedProject}
         onSuccess={handleDetailSuccess}
       />
-    </ProjectLayout>
+    </Box>
   );
 };
 

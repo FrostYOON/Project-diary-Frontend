@@ -45,7 +45,11 @@ const App: React.FC = () => {
       />
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={
+            <AppLayout>
+              <MainPage />
+            </AppLayout>
+          } />
           <Route path="/auth/callback" element={<AuthCallback />} />
           
           <Route
@@ -79,8 +83,9 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route 
-            path="/tasks" 
+          
+          <Route
+            path="/tasks"
             element={
               <ProtectedRoute>
                 <AppLayout>

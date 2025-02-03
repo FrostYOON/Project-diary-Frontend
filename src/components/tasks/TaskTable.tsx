@@ -12,8 +12,9 @@ interface TaskTableProps {
 }
 
 const formatDate = (dateString: string) => {
+  if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toISOString().split('T')[0];
+  return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}.`;
 };
 
 const TaskTable = ({ tasks, loading, onEdit }: TaskTableProps) => {
@@ -188,11 +189,9 @@ const TaskTable = ({ tasks, loading, onEdit }: TaskTableProps) => {
         disableColumnMenu
         sx={{ 
           bgcolor: 'white', 
+          opacity: 0.9,
           borderRadius: 2,
           width: '100%',
-          '& .hidden-column': {
-            display: 'none'
-          },
           '& .MuiDataGrid-cell': {
             borderColor: 'grey.200',
             textAlign: 'center',

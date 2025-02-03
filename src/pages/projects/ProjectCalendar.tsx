@@ -28,6 +28,7 @@ const ProjectCalendar = () => {
     const fetchProjects = async () => {
       try {
         const projectsData = await getProjects();
+        console.log(projectsData);
         setProjects(projectsData);
       } catch (error) {
         console.error('프로젝트 데이터 로딩 실패:', error);
@@ -71,9 +72,9 @@ const ProjectCalendar = () => {
             week: "주",
             day: "일",
           }}
-          eventPropGetter={(event) => ({
+          eventPropGetter={(event: { resource?: { status: string } }) => ({
             style: {
-              backgroundColor: '#1976d2',
+              backgroundColor: event.resource?.status === 'COMPLETED' ? '#4caf50' : '#1976d2',
               borderRadius: '4px',
             },
           })}
