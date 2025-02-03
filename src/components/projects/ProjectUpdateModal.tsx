@@ -68,7 +68,6 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
 
   const handleUpdate = async () => {
     if (!project?._id) return;
-    console.log(formData);
     try {
       await updateProject(project._id, formData);
       onSuccess();

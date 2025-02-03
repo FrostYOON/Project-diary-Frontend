@@ -151,21 +151,30 @@ const ProjectListPage = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5" fontWeight="bold">프로젝트 목록</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setIsModalOpen(true)}
-          sx={{
-            backgroundColor: '#F4A261',
-            '&:hover': {
-              backgroundColor: '#E76F51',
-            },
-          }}
-        >
-          프로젝트 생성
-        </Button>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        mb: 2, 
+      }}>
+        <Box sx={{ flex: 1 }} />
+        <Typography variant="h4" sx={{ flex: 1, textAlign: 'center' }}>프로젝트 목록</Typography>
+        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#F4A261',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#E76F51',
+              },
+            }}
+            startIcon={<AddIcon />}
+            onClick={() => setIsModalOpen(true)}
+          >
+            프로젝트 추가
+          </Button>
+        </Box>
       </Box>
       <Box sx={{ width: '100%', height: 'calc(100vh - 140px)' }}>
         <DataGrid
