@@ -26,8 +26,8 @@ export const useAuth = () => {
       setError(null);
       const response = await login(credentials);
       
-      if (response.success && response.accessToken) {
-        localStorage.setItem('accessToken', response.accessToken);
+      if (response.success && response.data.accessToken) {
+        localStorage.setItem('accessToken', response.data.accessToken);
         navigate('/');
       } else {
         throw new Error('로그인에 실패했습니다.');

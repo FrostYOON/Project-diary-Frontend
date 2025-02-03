@@ -3,6 +3,7 @@ import Header from '../components/common/Header';
 import Navbar from '../components/common/Navbar';
 import RootLayout from './RootLayout';
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const navWidth = isNavExpanded ? '240px' : '64px'; // 네비바 너비 상태
+  const location = useLocation();
+  const isMainPage = location.pathname === '/';
 
   return (
     <RootLayout isOverlayVisible={false}>
@@ -26,11 +29,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           marginLeft: '0',
           width: `calc(100% - ${navWidth})`,
         }}>
-          <Header />
+          {!isMainPage && <Header />}
           <Box sx={{ 
             flex: 1, 
             overflow: 'auto',
-            height: 'calc(100vh - 63px)',
+            height: isMainPage ? '100vh' : 'calc(100vh - 63px)',
             p: 1
           }}>
             {children}
