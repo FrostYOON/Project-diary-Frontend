@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Modal,
   Box,
@@ -14,28 +14,65 @@ import {
 } from '@mui/material';
 import { Project } from '../../types/project.types';
 import { updateProject, deleteProject } from '../../api/project.api';
-import { DEPARTMENTS } from '../../constants/departments';
 import { getUsersByDepartment } from '../../api/user.api';
 import { User } from '../../types/user.types';
+import { getDepartments } from '../../api/department.api';
+import { Department } from '../../types/department.types';
 
-interface ProjectDetailModalProps {
+interface ProjectUpdateModalProps {
   open: boolean;
   onClose: () => void;
   project: Project | null;
   onSuccess: () => void;
 }
 
-const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetailModalProps) => {
-  const [isEditing, setIsEditing] = useState(true);
+const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdateModalProps) => {
   const [formData, setFormData] = useState<Partial<Project>>(project || {});
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+
+  const fetchDepartments = useCallback(async () => {
+    try {
+      const { departments } = await getDepartments() as unknown as { departments: Department[] };
+      setDepartments(departments);
+    } catch (error) {
+      console.error('부서 목록 조회 실패:', error);
+      setDepartments([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDepartments();
+  }, [fetchDepartments]);
+
+  useEffect(() => {
+    if (project) {
+      const departmentId = typeof project.department === 'object' 
+        ? project.department._id 
+        : project.department;
+
+      setFormData({
+        ...project,
+        department: departmentId,
+        members: project.members?.map(member => 
+          typeof member === 'object' ? member._id : member
+        )
+      });
+
+      // 부서 사용자 목록 즉시 로드
+      if (departmentId) {
+        handleDepartmentChange(departmentId);
+      }
+    }
+  }, [project]);
 
   const handleUpdate = async () => {
     if (!project?._id) return;
+    console.log(formData);
     try {
       await updateProject(project._id, formData);
       onSuccess();
-      setIsEditing(true);
+      onClose();
     } catch (error) {
       console.error('프로젝트 수정 실패:', error);
       alert('프로젝트 수정에 실패했습니다.');
@@ -58,8 +95,7 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
     try {
       setFormData(prev => ({
         ...prev,
-        department: departmentId,
-        members: []
+        department: departmentId
       }));
 
       if (departmentId) {
@@ -67,31 +103,12 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
         if (response.success && response.data.users) {
           setDepartmentUsers(response.data.users);
         }
-      } else {
-        setDepartmentUsers([]);
       }
     } catch (error) {
       console.error('부서별 사용자 목록 조회 실패:', error);
       setDepartmentUsers([]);
     }
   };
-
-  useEffect(() => {
-    if (project?._id) {
-      const departmentId = typeof project.department === 'object' 
-        ? (project.department as { _id: string; name: string })._id 
-        : project.department;
-
-      setFormData({
-        ...project,
-        department: departmentId
-      });
-
-      if (departmentId) {
-        handleDepartmentChange(departmentId);
-      }
-    }
-  }, [project]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -116,19 +133,25 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
             label="프로젝트명"
             value={formData.title || ''}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            disabled={!isEditing}
           />
           
           <FormControl fullWidth>
             <InputLabel>담당 부서</InputLabel>
             <Select
-              value={formData.department || ''}
+              value={typeof formData.department === 'object' ? formData.department._id : formData.department || ''}
               label="담당 부서"
               onChange={(e) => handleDepartmentChange(e.target.value as string)}
-              disabled={!isEditing}
             >
-              {DEPARTMENTS.map((dept) => (
-                <MenuItem key={dept._id} value={dept._id}>{dept.name}</MenuItem>
+              <MenuItem value="">
+                <em>부서 선택</em>
+              </MenuItem>
+              {departments && departments.length > 0 && departments.map((dept: Department) => (
+                <MenuItem 
+                  key={dept._id}
+                  value={dept._id}
+                >
+                  {dept.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -148,7 +171,6 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
                 members: newValue.map(user => user._id)
               }));
             }}
-            disabled={!isEditing}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -176,7 +198,6 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
             rows={4}
             value={formData.description || ''}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            disabled={!isEditing}
           />
 
           <Box sx={{ display: 'flex', gap: 2 }}>
@@ -185,18 +206,16 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
               type="date"
               value={formData.startDate?.split('T')[0] || ''}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              disabled={!isEditing}
-              fullWidth
               InputLabelProps={{ shrink: true }}
+              fullWidth
             />
             <TextField
               label="종료일"
               type="date"
               value={formData.endDate?.split('T')[0] || ''}
               onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-              disabled={!isEditing}
-              fullWidth
               InputLabelProps={{ shrink: true }}
+              fullWidth
             />
           </Box>
 
@@ -206,7 +225,6 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
               value={formData.status || ''}
               label="상태"
               onChange={(e) => setFormData({ ...formData, status: e.target.value as Project['status'] })}
-              disabled={!isEditing}
             >
               <MenuItem value="준비">준비</MenuItem>
               <MenuItem value="진행중">진행중</MenuItem>
@@ -220,7 +238,6 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
             type="number"
             value={formData.progress || 0}
             onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
-            disabled={!isEditing}
             InputProps={{ inputProps: { min: 0, max: 100 } }}
           />
         </Box>
@@ -235,31 +252,22 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
           <Button 
             color="error" 
             onClick={handleDelete}
-            disabled={isEditing}
           >
             삭제
           </Button>
           <Box>
-            {!isEditing ? (
-              <Button onClick={() => setIsEditing(true)}>
-                수정
-              </Button>
-            ) : (
-              <>
-                <Button 
-                  onClick={() => setIsEditing(false)} 
-                  sx={{ mr: 1 }}
-                >
-                  취소
-                </Button>
-                <Button 
-                  variant="contained"
-                  onClick={handleUpdate}
-                >
-                  저장
-                </Button>
-              </>
-            )}
+            <Button 
+              onClick={onClose} 
+              sx={{ mr: 1 }}
+            >
+              취소
+            </Button>
+            <Button 
+              variant="contained"
+              onClick={handleUpdate}
+            >
+              저장
+            </Button>
           </Box>
         </Box>
       </Box>
@@ -267,4 +275,4 @@ const ProjectDetailModal = ({ open, onClose, project, onSuccess }: ProjectDetail
   );
 };
 
-export default ProjectDetailModal; 
+export default ProjectUpdateModal; 
