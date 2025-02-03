@@ -10,6 +10,7 @@ import RootLayout from "./layouts/RootLayout";
 import AuthCallback from './pages/auth/AuthCallback';
 import ProjectListPage from "./pages/projects/ProjectListPage";
 import PersonalTaskPage from './pages/tasks/PersonalTaskPage';
+import NotificationListPage from './pages/notifications/NotificationListPage';
 import AppLayout from './layouts/AppLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -103,6 +104,16 @@ const App: React.FC = () => {
                 </Suspense>
               </ProtectedRoute>
             } 
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <NotificationListPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </Router>
