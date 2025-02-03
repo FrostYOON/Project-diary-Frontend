@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { GlobalStyles } from "@mui/material";
@@ -25,6 +25,8 @@ const theme = createTheme({
   },
 });
 
+const ProjectCalendar = lazy(() => import('./pages/projects/ProjectCalendar'));
+
 const App: React.FC = () => {
   const [isOverlayVisible, setOverlayVisible] = useState(false);
 
@@ -43,7 +45,11 @@ const App: React.FC = () => {
       />
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={
+            <AppLayout>
+              <MainPage />
+            </AppLayout>
+          } />
           <Route path="/auth/callback" element={<AuthCallback />} />
           
           <Route
@@ -67,8 +73,8 @@ const App: React.FC = () => {
             }
           />
           
-          <Route
-            path="/projects"
+          <Route 
+            path="/projects" 
             element={
               <ProtectedRoute>
                 <AppLayout>
@@ -77,6 +83,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/tasks"
             element={
@@ -86,6 +93,16 @@ const App: React.FC = () => {
                 </AppLayout>
               </ProtectedRoute>
             }
+          />
+          <Route 
+            path="/projectCalendar" 
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <ProjectCalendar />
+                </Suspense>
+              </ProtectedRoute>
+            } 
           />
         </Routes>
       </Router>
