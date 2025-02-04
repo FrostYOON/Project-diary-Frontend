@@ -81,15 +81,15 @@ export const calendarWrapperStyle: SxProps = {
   flex: 1,
   overflow: 'auto',
   '& .rbc-calendar': {
-    '& .rbc-row-bg .rbc-day-bg:first-child, & .rbc-row .rbc-date-cell:first-child': {
+    '& .rbc-row-bg .rbc-day-bg:first-of-type, & .rbc-row .rbc-date-cell:first-of-type': {
       backgroundColor: '#fff1f0 !important',
       color: '#ff4d4f !important'
     },
-    '& .rbc-header:first-child': {
+    '& .rbc-header:first-of-type': {
       backgroundColor: '#fff1f0 !important',
       color: '#ff4d4f !important'
     },
-    '& .rbc-row-bg .rbc-day-bg:last-child, & .rbc-row .rbc-date-cell:last-child': {
+    '& .rbc-row-bg .rbc-day-bg:last-of-type, & .rbc-row .rbc-date-cell:last-of-type': {
       backgroundColor: '#f0f5ff !important',
       color: '#1890ff !important'
     },
