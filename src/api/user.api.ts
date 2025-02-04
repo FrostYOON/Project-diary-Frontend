@@ -46,4 +46,14 @@ export const changePassword = async (currentPassword: string, newPassword: strin
     console.error('비밀번호 변경 실패:', error);
     throw error;
   }
-};    
+};
+
+export const getUserRole = async (): Promise<string> => {
+  try {
+    const response = await axiosInstance.get('/users/role');
+    return response.data.data.role;
+  } catch (error) {
+    console.error('사용자 권한 조회 실패:', error);
+    throw error;
+  }
+};
