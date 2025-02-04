@@ -100,24 +100,26 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
           </ListItemButton>
         </Box>
 
-        {/* 메인 메뉴 섹션 */}
-        <Box sx={mainMenuSectionStyle}>
-          {mainMenuItems.map((item) => (
-            <ListItemButton
-              key={item.path}
-              onClick={() => item.path && navigate(item.path)}
-              sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
-            >
-              <ListItemIcon sx={listItemIconStyle}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.text} 
-                sx={listItemTextStyle(open)}
-              />
-            </ListItemButton>
-          ))}
-        </Box>
+        {/* 메인 메뉴 섹션 - 로그인된 경우에만 표시 */}
+        {isLoggedIn && (
+          <Box sx={mainMenuSectionStyle}>
+            {mainMenuItems.map((item) => (
+              <ListItemButton
+                key={item.path}
+                onClick={() => item.path && navigate(item.path)}
+                sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
+              >
+                <ListItemIcon sx={listItemIconStyle}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  sx={listItemTextStyle(open)}
+                />
+              </ListItemButton>
+            ))}
+          </Box>
+        )}
 
         {/* 하단 메뉴 섹션 */}
         <Box sx={bottomListStyle}>
