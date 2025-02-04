@@ -9,10 +9,12 @@ export interface Notification {
   title: string;
   content: string;
   type: NotificationType;
-  project: {
+  project?: {
     _id: string;
     title: string;
   };
+  recipients: string[];
   isRead: boolean;
+  readBy: string[];
   createdAt: string;
 } 

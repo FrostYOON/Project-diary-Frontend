@@ -9,9 +9,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const refreshNotifications = async () => {
     try {
-      const data = await getNotifications();
+      const data = await getNotifications(); // 서버에서 이미 필터링된 알림만 받아옴
+      
       setNotifications(data);
-      setUnreadCount(data.filter(n => !n.isRead).length);
+      setUnreadCount(data.filter(n => n.recipients?.length > 0).length);
     } catch (error) {
       console.error('알림 조회 실패:', error);
     }
@@ -19,22 +20,45 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const markAsRead = async (notificationId: string) => {
     try {
-      await markNotificationAsRead(notificationId);
-      setNotifications(prev => 
-        prev.map(n => n._id === notificationId ? { ...n, isRead: true } : n)
-      );
-      setUnreadCount(prev => prev - 1);
+      const notification = notifications.find(n => n._id === notificationId);
+      if (notification?.readBy && notification.readBy.length > 0) {
+        return;
+      }
+
+      const updatedNotification = await markNotificationAsRead(notificationId);
+      if (updatedNotification) {
+        setNotifications(prev => 
+          prev.map(n => 
+            n._id === notificationId 
+              ? updatedNotification
+              : n
+          )
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
     } catch (error) {
       console.error('알림 읽음 처리 실패:', error);
+      throw error;
     }
   };
 
   const deleteNotification = async (notificationId: string) => {
     try {
       await deleteNotificationApi(notificationId);
-      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+      setNotifications(prev => 
+        prev.map(n => {
+          if (n._id === notificationId) {
+            return {
+              ...n,
+              readBy: []  // 서버에서 처리된 후 readBy를 비움
+            };
+          }
+          return n;
+        })
+      );
     } catch (error) {
       console.error('알림 삭제 실패:', error);
+      throw error;
     }
   };
 
