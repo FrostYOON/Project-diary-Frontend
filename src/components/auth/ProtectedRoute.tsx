@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { axiosInstance } from '../../api/axios.config';
+import { axiosInstance } from '../../config/axios.config';
 import { AxiosError } from 'axios';
 
 interface ProtectedRouteProps {

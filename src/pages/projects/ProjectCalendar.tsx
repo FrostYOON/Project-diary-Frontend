@@ -91,12 +91,55 @@ const ProjectCalendar = () => {
     setIsModalOpen(true);
   };
 
+  const eventContent = ({ event }: { 
+    event: { resource: Project; start: Date; title: string }
+  }) => {
+    const allEvents = events.filter((e) => 
+      new Date(e.start).toDateString() === event.start.toDateString()
+    );
+    
+    const currentIndex = allEvents.findIndex((event: { id: string }) => 
+      event.id === event.id
+    );
+
+    // 3개 이상의 이벤트가 있고, 현재 이벤트가 3번째 이후일 경우
+    if (allEvents.length > 3 && currentIndex >= 3) {
+      // 3번째 이벤트일 경우에만 +n 표시
+      if (currentIndex === 3) {
+        return (
+          <div style={{ 
+            fontSize: '0.85em',
+            padding: '2px 4px',
+            color: '#666'
+          }}>
+            +{allEvents.length - 3}
+          </div>
+        );
+      }
+      // 4번째 이후의 이벤트는 숨김
+      return null;
+    }
+
+    // 3개 이하의 이벤트이거나 처음 3개의 이벤트는 정상 표시
+    return (
+      <div style={{
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        fontSize: '0.85em',
+        padding: '2px 4px',
+      }}>
+        {event.title}
+      </div>
+    );
+  };
+
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box>
       <CalendarContainer>
         <Box sx={{ 
           display: 'flex', 
@@ -131,6 +174,9 @@ const ProjectCalendar = () => {
         <Calendar
           localizer={localizer}
           events={events}
+          components={{
+            event: eventContent
+          }}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 'calc(100vh - 200px)' }}

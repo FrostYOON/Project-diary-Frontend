@@ -26,19 +26,21 @@ interface CreateProjectModalProps {
   onSuccess: () => void;
 }
 
+const initialFormData: CreateProjectData = {
+  title: '',
+  department: '',
+  description: '',
+  startDate: '',
+  endDate: '',
+  status: '준비' as const,
+  progress: 0,
+  members: [],
+};
+
 const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProps) => {
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [formData, setFormData] = useState<CreateProjectData>({
-    title: '',
-    department: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    status: '준비',
-    progress: 0,
-    members: [],
-  });
+  const [formData, setFormData] = useState<CreateProjectData>(initialFormData);
 
   const fetchDepartments = useCallback(async () => {
     try {
@@ -59,6 +61,8 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
   useEffect(() => {
     if (open) {
       fetchDepartments();
+      setFormData(initialFormData);
+      setDepartmentUsers([]);
     }
   }, [open, fetchDepartments]);
 
@@ -105,8 +109,14 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
     }
   };
 
+  const handleClose = () => {
+    setFormData(initialFormData);
+    setDepartmentUsers([]);
+    onClose();
+  };
+
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <Box sx={{
         position: 'absolute',
         top: '50%',

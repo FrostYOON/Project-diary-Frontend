@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_BASE_URL } from './config';
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_BASE_URL,
   timeout: 5000,
   withCredentials: true,
   headers: {
@@ -33,5 +34,7 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+
 
 export default axiosInstance;

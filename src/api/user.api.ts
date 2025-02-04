@@ -1,4 +1,4 @@
-import { axiosInstance } from './axios.config';
+import { axiosInstance } from '../config/axios.config';
 import { User, UserResponse } from '../types/user.types';
 
 export const getUsersByDepartment = async (departmentId: string): Promise<UserResponse> => {
