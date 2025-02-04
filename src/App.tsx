@@ -14,6 +14,8 @@ import NotificationListPage from './pages/notifications/NotificationListPage';
 import AppLayout from './layouts/AppLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import MyPage from './pages/my/myPage';
+import ChangePassword from './pages/my/ChangePassword';
 
 const theme = createTheme({
   palette: {
@@ -111,6 +113,26 @@ const App: React.FC = () => {
               <ProtectedRoute>
                 <AppLayout>
                   <NotificationListPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mypage"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <MyPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my/change-password"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ChangePassword />
                 </AppLayout>
               </ProtectedRoute>
             }
