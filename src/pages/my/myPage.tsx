@@ -32,6 +32,8 @@ const MyPage = () => {
           getCurrentUser(),
           getDepartments()
         ]);
+        console.log('User data in MyPage:', userData);
+        console.log('User registerType:', userData.registerType);
         setUser(userData);
         if (Array.isArray(departmentsData)) {
           setDepartments(departmentsData);
@@ -154,18 +156,20 @@ const MyPage = () => {
                   >
                     수정
                   </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => navigate('/my/change-password')}
-                    sx={{
-                      backgroundColor: '#F4A261',
-                      '&:hover': {
-                        backgroundColor: '#E76F51',
-                      },
-                    }}
-                  >
-                    비밀번호 변경
-                  </Button>
+                  {(!user?.registerType || user?.registerType === 'normal') && (
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate('/my/change-password')}
+                      sx={{
+                        backgroundColor: '#F4A261',
+                        '&:hover': {
+                          backgroundColor: '#E76F51',
+                        },
+                      }}
+                    >
+                      비밀번호 변경
+                    </Button>
+                  )}
                 </>
               ) : (
                 <>
