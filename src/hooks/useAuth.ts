@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { login } from '../api/auth.api';
+import { authService } from '../api/auth.api';
 import { LoginCredentials } from '../types/auth.types';
 
 export const useAuth = () => {
@@ -24,7 +24,7 @@ export const useAuth = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await login(credentials);
+      const response = await authService.login(credentials);
       
       if (response.success && response.data.accessToken) {
         localStorage.setItem('accessToken', response.data.accessToken);

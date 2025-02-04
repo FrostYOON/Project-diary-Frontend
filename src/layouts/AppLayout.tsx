@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Header from '../components/common/Header';
+import Header from '../components/common/Header/Header';
 import Navbar from '../components/common/Navbar';
 import RootLayout from './RootLayout';
 import { useState } from 'react';
@@ -7,9 +7,10 @@ import { useLocation } from 'react-router-dom';
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  hideHeader?: boolean;
 }
 
-const AppLayout = ({ children }: AppLayoutProps) => {
+const AppLayout = ({ children, hideHeader = false }: AppLayoutProps) => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const navWidth = isNavExpanded ? '240px' : '64px'; // 네비바 너비 상태
   const location = useLocation();
@@ -29,11 +30,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           marginLeft: '0',
           width: `calc(100% - ${navWidth})`,
         }}>
-          {!isMainPage && <Header />}
+          {!hideHeader && !isMainPage && <Header />}
           <Box sx={{ 
             flex: 1, 
             overflow: 'auto',
-            height: isMainPage ? '100vh' : 'calc(100vh - 63px)',
+            height: isMainPage || hideHeader ? '100vh' : 'calc(100vh - 63px)',
             p: 1
           }}>
             {children}

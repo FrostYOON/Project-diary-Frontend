@@ -6,7 +6,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styled from 'styled-components';
 import { getProjects } from '../../api/project.api';
 import { Project } from '../../types/project.types';
-import AppLayout from '../../layouts/AppLayout';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Button, Chip } from '@mui/material';
 
 const locales = {
@@ -97,7 +96,7 @@ const ProjectCalendar = () => {
   }
 
   return (
-    <AppLayout>
+    <Box sx={{ p: 3 }}>
       <CalendarContainer>
         <Box sx={{ 
           display: 'flex', 
@@ -134,7 +133,7 @@ const ProjectCalendar = () => {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 'calc(100vh - 180px)' }}
+          style={{ height: 'calc(100vh - 200px)' }}
           views={['month', 'week', 'day']}
           defaultView="month"
           tooltipAccessor={event => `${event.title}`}
@@ -166,6 +165,11 @@ const ProjectCalendar = () => {
             month: "월",
             week: "주",
             day: "일",
+            agenda: "일정",
+            date: "날짜",
+            time: "시간",
+            event: "일정",
+            noEventsInRange: "해당 기간에 일정이 없습니다."
           }}
           eventPropGetter={(event: { resource?: { status: string } }) => ({
             style: {
@@ -265,7 +269,7 @@ const ProjectCalendar = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </AppLayout>
+    </Box>
   );
 };
 
