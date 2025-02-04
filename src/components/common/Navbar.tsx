@@ -29,7 +29,9 @@ import {
   listItemTextStyle,
   navListStyle,
   bottomListStyle,
-  logoItemStyle
+  logoItemStyle,
+  logoSectionStyle,
+  mainMenuSectionStyle
 } from '../../styles/components/navbar.styles';
 
 interface NavbarProps {
@@ -83,37 +85,41 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
       onMouseLeave={() => !isMobile && setOpen(false)}
     >
       <List sx={navListStyle}>
-        {/* 로고 */}
-        <ListItemButton
-          key="logo"
-          onClick={() => navigate('/')}
-          sx={logoItemStyle}
-        >
-          <Box
-            component="img"
-            src={logo}
-            sx={logoStyle(open)}
-          />
-        </ListItemButton>
-
-        {/* 메인 메뉴 */}
-        {mainMenuItems.map((item) => (
+        {/* 로고 섹션 */}
+        <Box sx={logoSectionStyle}>
           <ListItemButton
-            key={item.path}
-            onClick={() => item.path && navigate(item.path)}
-            sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
+            key="logo"
+            onClick={() => navigate('/')}
+            sx={logoItemStyle}
           >
-            <ListItemIcon sx={listItemIconStyle}>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
-              sx={listItemTextStyle(open)}
+            <Box
+              component="img"
+              src={logo}
+              sx={logoStyle(open)}
             />
           </ListItemButton>
-        ))}
+        </Box>
 
-        {/* 하단 메뉴 */}
+        {/* 메인 메뉴 섹션 */}
+        <Box sx={mainMenuSectionStyle}>
+          {mainMenuItems.map((item) => (
+            <ListItemButton
+              key={item.path}
+              onClick={() => item.path && navigate(item.path)}
+              sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
+            >
+              <ListItemIcon sx={listItemIconStyle}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.text} 
+                sx={listItemTextStyle(open)}
+              />
+            </ListItemButton>
+          ))}
+        </Box>
+
+        {/* 하단 메뉴 섹션 */}
         <Box sx={bottomListStyle}>
           {bottomMenuItems.map((item) => (
             <ListItemButton

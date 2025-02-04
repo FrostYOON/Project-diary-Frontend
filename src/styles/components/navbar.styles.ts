@@ -69,9 +69,12 @@ export const navListStyle: SxProps<Theme> = {
   flexDirection: 'column',
   height: '100%',
   padding: 0,
-  '& > .MuiListItemButton-root:nth-of-type(4)': {
-    marginBottom: '400px'
-  }
+  position: 'relative'
+};
+
+export const logoSectionStyle: SxProps<Theme> = {
+  borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  marginBottom: '16px'
 };
 
 export const logoItemStyle: SxProps<Theme> = {
@@ -83,8 +86,16 @@ export const logoItemStyle: SxProps<Theme> = {
   }
 };
 
+export const mainMenuSectionStyle: SxProps<Theme> = {
+  padding: '8px 0',
+  borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+};
+
 export const bottomListStyle: SxProps<Theme> = {
-  marginTop: 'auto',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
   borderTop: '1px solid rgba(0, 0, 0, 0.12)',
   backgroundColor: '#D4A373',
   padding: '16px 0',
