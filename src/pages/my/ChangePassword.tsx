@@ -10,6 +10,13 @@ import {
   Stack,
 } from '@mui/material';
 import { changePassword, getCurrentUser } from '../../api/user.api';
+import { 
+  changePasswordContainerStyle,
+  changePasswordPaperStyle,
+  buttonGroupStyle,
+  submitButtonStyle,
+  passwordFieldStyle
+} from '../../styles/pages/changePassword.styles';
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -28,8 +35,6 @@ const ChangePassword = () => {
     const checkUserAccess = async () => {
       try {
         const user = await getCurrentUser();
-        console.log('User data in ChangePassword:', user);
-        console.log('User registerType:', user.registerType);
         
         // 일반 이메일 로그인 사용자가 아닌 경우 접근 제한
         if (!user || user.registerType !== 'normal') {
@@ -93,8 +98,8 @@ const ChangePassword = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4, width: "500px" }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+    <Container sx={changePasswordContainerStyle}>
+      <Paper elevation={3} sx={changePasswordPaperStyle}>
         <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
           비밀번호 변경
         </Typography>
@@ -102,9 +107,10 @@ const ChangePassword = () => {
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
             <TextField
+              sx={passwordFieldStyle}
+              label="현재 비밀번호"
               type="password"
               name="currentPassword"
-              label="현재 비밀번호"
               value={formData.currentPassword}
               onChange={handleChange}
               error={!!errors.currentPassword}
@@ -114,9 +120,10 @@ const ChangePassword = () => {
             />
 
             <TextField
+              sx={passwordFieldStyle}
+              label="새 비밀번호"
               type="password"
               name="newPassword"
-              label="새 비밀번호"
               value={formData.newPassword}
               onChange={handleChange}
               error={!!errors.newPassword}
@@ -126,9 +133,10 @@ const ChangePassword = () => {
             />
 
             <TextField
+              sx={passwordFieldStyle}
+              label="새 비밀번호 확인"
               type="password"
               name="confirmNewPassword"
-              label="새 비밀번호 확인"
               value={formData.confirmNewPassword}
               onChange={handleChange}
               error={!!errors.confirmNewPassword}
@@ -137,24 +145,13 @@ const ChangePassword = () => {
               required
             />
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 4 }}>
+            <Box sx={buttonGroupStyle}>
               <Button
-                variant="outlined"
-                onClick={() => navigate('/mypage')}
-              >
-                취소
-              </Button>
-              <Button
-                type="submit"
                 variant="contained"
-                sx={{
-                  backgroundColor: '#F4A261',
-                  '&:hover': {
-                    backgroundColor: '#E76F51',
-                  },
-                }}
+                type="submit"
+                sx={submitButtonStyle}
               >
-                저장
+                변경하기
               </Button>
             </Box>
           </Stack>

@@ -1,6 +1,8 @@
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
 import logo from '../assets/images/logo.png';
+import { centeredContainerStyle } from '../styles/common/containers';
+import { logoStyle } from '../styles/components/logo.styles';
 
 const MainPage = () => {
   useEffect(() => {
@@ -15,32 +17,12 @@ const MainPage = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10
-      }}
-    >
+    <Box sx={centeredContainerStyle}>
       <Box
         component="img"
         src={logo}
         alt="logo"
-        sx={{
-          width: 300,
-          height: 'auto',
-          opacity: 0.9,
-          transition: 'opacity 0.3s ease',
-          '&:hover': {
-            opacity: 1
-          }
-        }}
+        sx={logoStyle}
       />
     </Box>
   );
