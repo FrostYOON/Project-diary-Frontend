@@ -1,4 +1,4 @@
-import { axiosInstance } from './axios.config';
+import { axiosInstance } from '../config/axios.config';
 import { Department, DepartmentResponse } from '../types/department.types';
 
 export const getDepartments = async (): Promise<Department[]> => {

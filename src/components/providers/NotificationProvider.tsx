@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
-import { Notification } from '../types/notification.types';
-import { getNotifications, markNotificationAsRead, deleteNotification as deleteNotificationApi } from '../api/notification';
-import { NotificationContext } from './NotificationContext';
+import { Notification } from '../../types/notification.types';
+import { getNotifications, markNotificationAsRead, deleteNotification as deleteNotificationApi } from '../../api/notification';
+import { NotificationContext } from '../../contexts/NotificationContext';
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);

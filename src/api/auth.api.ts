@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { SignUpFormData, LoginCredentials, AuthResponse } from '../types/auth.types';
-import { axiosInstance } from './axios.config';
+import { axiosInstance } from '../config/axios.config';
+import { API_BASE_URL } from '../config/config';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = API_BASE_URL;
 
 export const authService = {
   async signup(userData: Omit<SignUpFormData, 'confirmPassword'>) {

@@ -7,7 +7,7 @@ import TaskAddModal from '../../components/tasks/TaskAddModal';
 import TaskEditModal from '../../components/tasks/TaskEditModal';
 import { useTaskTable } from '../../hooks/tasks/useTaskTable';
 import { TaskFormData } from '../../types/task.types';
-import { axiosInstance } from '../../api/axios.config';
+import { axiosInstance } from '../../config/axios.config';
 
 const PersonalTaskPage = () => {
   const {

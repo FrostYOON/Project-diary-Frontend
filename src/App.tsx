@@ -1,7 +1,4 @@
-import { useState, lazy, Suspense } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { GlobalStyles } from "@mui/material";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/auth/LoginPage";
@@ -14,20 +11,11 @@ import NotificationListPage from "./pages/notifications/NotificationListPage";
 import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import { NotificationProvider } from "./contexts/NotificationProvider";
+import { NotificationProvider } from "./components/providers/NotificationProvider";
 import MyPage from "./pages/my/myPage";
 import ChangePassword from "./pages/my/ChangePassword";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#F4A261",
-    },
-    secondary: {
-      main: "#dc004e",
-    },
-  },
-});
+import { AppThemeProvider } from "./components/providers/ThemeProvider";
+import { useState } from "react";
 
 const ProjectCalendar = lazy(() => import("./pages/projects/ProjectCalendar"));
 
@@ -36,18 +24,7 @@ const App: React.FC = () => {
 
   return (
     <NotificationProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <GlobalStyles
-          styles={{
-            "html, body, #root": {
-              width: "100%",
-              height: "100%",
-              margin: 0,
-              padding: 0,
-            },
-          }}
-        />
+      <AppThemeProvider>
         <Router>
           <Routes>
             <Route
@@ -140,7 +117,7 @@ const App: React.FC = () => {
             />
           </Routes>
         </Router>
-      </ThemeProvider>
+      </AppThemeProvider>
     </NotificationProvider>
   );
 };
