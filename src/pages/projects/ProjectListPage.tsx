@@ -8,6 +8,12 @@ import { Project } from '../../types/project.types';
 import CreateProjectModal from '../../components/projects/CreateProjectModal';
 import ProjectUpdateModal from '../../components/projects/ProjectUpdateModal';
 import { retryRequest } from '../../utils/api.utils';
+import { 
+  projectListHeaderStyle, 
+  projectTitleStyle, 
+  projectButtonContainerStyle 
+} from '../../styles/pages/project.styles';
+import { primaryButtonStyle } from '../../styles/common/buttons';
 
 const ProjectListPage = () => {
   const navigate = useNavigate();
@@ -178,24 +184,15 @@ const ProjectListPage = () => {
 
   return (
     <Box>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        mb: 2, 
-      }}>
+      <Box sx={projectListHeaderStyle}>
         <Box sx={{ flex: 1 }} />
-        <Typography variant="h4" sx={{ flex: 1, textAlign: 'center' }}>프로젝트 목록</Typography>
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+        <Typography variant="h4" sx={projectTitleStyle}>
+          프로젝트 목록
+        </Typography>
+        <Box sx={projectButtonContainerStyle}>
           <Button
             variant="contained"
-            sx={{
-              backgroundColor: '#F4A261',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#E76F51',
-              },
-            }}
+            sx={primaryButtonStyle}
             startIcon={<AddIcon />}
             onClick={() => setIsModalOpen(true)}
           >
@@ -223,6 +220,7 @@ const ProjectListPage = () => {
             bgcolor: 'white', 
             borderRadius: 2,
             width: '100%',
+            opacity: 0.9,
             '& .MuiDataGrid-cell': {
               borderColor: 'grey.200',
               textAlign: 'center',

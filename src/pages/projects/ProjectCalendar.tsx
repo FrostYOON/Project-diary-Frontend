@@ -3,10 +3,24 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import styled from 'styled-components';
 import { getProjects } from '../../api/project.api';
 import { Project } from '../../types/project.types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Button, Chip } from '@mui/material';
+import {
+  calendarHeaderStyle,
+  calendarTitleStyle,
+  legendContainerStyle,
+  legendItemStyle,
+  legendColorBoxStyle,
+  modalTitleStyle,
+  modalContentStyle,
+  modalActionsStyle,
+  closeButtonStyle,
+  calendarPageContainerStyle,
+  calendarContainerStyle,
+  calendarWrapperStyle,
+  calendarEventStyle
+} from '../../styles/pages/projectCalendar.styles';
 
 const locales = {
   'ko': ko,
@@ -19,43 +33,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
-const CalendarContainer = styled(Box)`
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-  .rbc-calendar {
-    .rbc-header {
-      &:first-of-type {  /* 일요일 */
-        color: #ff4d4f;
-      }
-      &:last-of-type {   /* 토요일 */
-        color: #1890ff;
-      }
-    }
-
-    .rbc-date-cell {
-      &:first-of-type {  /* 일요일 날짜 */
-        color: #ff4d4f;
-      }
-      &:last-of-type {   /* 토요일 날짜 */
-        color: #1890ff;
-      }
-      
-      &.rbc-off-range {
-        color: #ccc;
-      }
-      &.rbc-today {
-        background-color: #e6f7ff;
-      }
-      &.rbc-off-range-bg {
-        background-color: #f5f5f5;
-      }
-    }
-  }
-`;
 
 const ProjectCalendar = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -139,96 +116,72 @@ const ProjectCalendar = () => {
   }
 
   return (
-    <Box>
-      <CalendarContainer>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-        }}>
-          <Box sx={{ flex: 1 }} /> {/* 왼쪽 여백 */}
-          <Typography variant="h3" sx={{ flex: 1, textAlign: 'center' }}>프로젝트 현황</Typography>
-          <Box sx={{ 
-            display: 'flex', 
-            gap: 2, 
-            flex: 1,
-            justifyContent: 'flex-end'
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 16, height: 16, backgroundColor: '#90CAF9', borderRadius: 1 }} />
+    <Box sx={calendarPageContainerStyle}>
+      <Box sx={calendarContainerStyle}>
+        <Box sx={calendarHeaderStyle}>
+          <Box sx={{ flex: 1 }} />
+          <Typography variant="h3" sx={calendarTitleStyle}>
+            프로젝트 현황
+          </Typography>
+          <Box sx={legendContainerStyle}>
+            <Box sx={legendItemStyle}>
+              <Box sx={legendColorBoxStyle('#90CAF9')} />
               <Typography>준비</Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 16, height: 16, backgroundColor: '#F4A261', borderRadius: 1 }} />
+            <Box sx={legendItemStyle}>
+              <Box sx={legendColorBoxStyle('#F4A261')} />
               <Typography>진행중</Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 16, height: 16, backgroundColor: '#4CAF50', borderRadius: 1 }} />
+            <Box sx={legendItemStyle}>
+              <Box sx={legendColorBoxStyle('#4CAF50')} />
               <Typography>완료</Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 16, height: 16, backgroundColor: '#9E9E9E', borderRadius: 1 }} />
+            <Box sx={legendItemStyle}>
+              <Box sx={legendColorBoxStyle('#9E9E9E')} />
               <Typography>보류</Typography>
             </Box>
           </Box>
         </Box>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          components={{
-            event: eventContent
-          }}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 'calc(100vh - 200px)' }}
-          views={['month', 'week', 'day']}
-          defaultView="month"
-          tooltipAccessor={event => `${event.title}`}
-          onSelectEvent={handleEventClick}
-          dayPropGetter={date => {
-            const day = date.getDay();
-            if (day === 0) { // 일요일
-              return {
-                style: {
-                  backgroundColor: '#fff1f0',
-                  color: '#ff4d4f'
-                }
-              };
-            }
-            if (day === 6) { // 토요일
-              return {
-                style: {
-                  backgroundColor: '#f0f5ff',
-                  color: '#1890ff'
-                }
-              };
-            }
-            return {};
-          }}
-          messages={{
-            next: "다음",
-            previous: "이전",
-            today: "오늘",
-            month: "월",
-            week: "주",
-            day: "일",
-            agenda: "일정",
-            date: "날짜",
-            time: "시간",
-            event: "일정",
-            noEventsInRange: "해당 기간에 일정이 없습니다."
-          }}
-          eventPropGetter={(event: { resource?: { status: string } }) => ({
-            style: {
-              backgroundColor: 
-                event.resource?.status === '완료' ? '#4CAF50' :  // 완료: 초록색
-                event.resource?.status === '진행중' ? '#F4A261' : // 진행중: 주황색
-                event.resource?.status === '보류' ? '#9E9E9E' :    // 보류: 회색
-                '#90CAF9',                                            // 준비: 연한 파란색
-              borderRadius: '4px',
-            },
-          })}
-        />
-      </CalendarContainer>
+        <Box sx={calendarWrapperStyle}>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            components={{
+              event: eventContent
+            }}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: '100%' }}
+            views={['month', 'week', 'day']}
+            defaultView="month"
+            tooltipAccessor={event => `${event.title}`}
+            onSelectEvent={handleEventClick}
+            className="custom-calendar"
+            dayPropGetter={date => {
+              const day = date.getDay();
+              if (day === 0) return { className: 'sunday' };
+              if (day === 6) return { className: 'saturday' };
+              return {};
+            }}
+            messages={{
+              next: "다음",
+              previous: "이전",
+              today: "오늘",
+              month: "월",
+              week: "주",
+              day: "일",
+              agenda: "일정",
+              date: "날짜",
+              time: "시간",
+              event: "일정",
+              noEventsInRange: "해당 기간에 일정이 없습니다."
+            }}
+            eventPropGetter={(event: { resource?: { status: string } }) => ({
+              style: calendarEventStyle(event.resource?.status || '')
+            })}
+          />
+        </Box>
+      </Box>
 
       <Dialog 
         open={isModalOpen} 
@@ -242,15 +195,10 @@ const ProjectCalendar = () => {
           }
         }}
       >
-        <DialogTitle sx={{ 
-          borderBottom: '1px solid #eee',
-          backgroundColor: '#f8f9fa',
-          px: 3,
-          py: 2
-        }}>
+        <DialogTitle sx={modalTitleStyle}>
           프로젝트 상세
         </DialogTitle>
-        <DialogContent sx={{ p: 3 }}>
+        <DialogContent sx={modalContentStyle}>
           {selectedEvent && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ mb: 2 }}>
@@ -296,20 +244,11 @@ const ProjectCalendar = () => {
             </Box>
           )}
         </DialogContent>
-        <DialogActions sx={{ 
-          p: 2,
-          borderTop: '1px solid #eee',
-          backgroundColor: '#f8f9fa'
-        }}>
+        <DialogActions sx={modalActionsStyle}>
           <Button 
             onClick={() => setIsModalOpen(false)}
             variant="contained"
-            sx={{ 
-              backgroundColor: '#F4A261',
-              '&:hover': {
-                backgroundColor: '#E76F51'
-              }
-            }}
+            sx={closeButtonStyle}
           >
             닫기
           </Button>

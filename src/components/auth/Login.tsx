@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import google_icon from '@/assets/images/google_icon.png';
 import { Container, Paper, Typography } from '@mui/material';
+import { formContainerStyle, formPaperStyle, formTitleStyle } from '../../styles/components/form.styles';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -26,23 +27,13 @@ export const Login = () => {
     <Container 
       component="main" 
       maxWidth="md" 
-      sx={{ 
-        width: "500px",
-        position: "relative",
-        zIndex: 2  // 오버레이 위에 표시되도록 z-index 추가
-      }}
+      sx={formContainerStyle}
     >
       <Paper
         elevation={3}
-        sx={{
-          padding: 6,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.95)",  // 배경을 약간 투명하게
-        }}
+        sx={formPaperStyle}
       >
-        <Typography component="h1" variant="h3" sx={{ mb: 4, fontWeight: 'bold' }}>
+        <Typography component="h1" variant="h3" sx={formTitleStyle}>
           로그인
         </Typography>
         <LoginForm onSubmit={onSubmit}>

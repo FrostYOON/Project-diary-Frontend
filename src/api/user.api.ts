@@ -14,7 +14,6 @@ export const getUsersByDepartment = async (departmentId: string): Promise<UserRe
 export const getCurrentUser = async (): Promise<User> => {
   try {
     const response = await axiosInstance.get<{ success: boolean; data: { user: User } }>('/users/me');
-    console.log('Current user data:', response.data.data.user);
     return response.data.data.user;
   } catch (error) {
     console.error('현재 사용자 정보 조회 실패:', error);
