@@ -32,8 +32,6 @@ const MyPage = () => {
           getCurrentUser(),
           getDepartments()
         ]);
-        console.log('User data in MyPage:', userData);
-        console.log('User registerType:', userData.registerType);
         setUser(userData);
         if (Array.isArray(departmentsData)) {
           setDepartments(departmentsData);

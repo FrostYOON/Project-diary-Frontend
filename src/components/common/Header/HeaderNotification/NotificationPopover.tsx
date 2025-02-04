@@ -44,7 +44,7 @@ const NotificationPopover = () => {
     <>
       <IconButton color="inherit" onClick={handleClick}>
         <Badge badgeContent={unreadCount} color="error">
-          <NotificationIcon />
+          <NotificationIcon sx={{ color: '#D4A373' }} />
         </Badge>
       </IconButton>
       <Popover

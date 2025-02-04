@@ -1,17 +1,18 @@
 import { useState, useCallback, useEffect } from 'react';
 import {
-  Modal,
   Box,
-  Typography,
   TextField,
   Button,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Stack,
-  Autocomplete,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
 } from '@mui/material';
 import { CreateProjectData, Project } from '../../types/project.types';
 import { createProject } from '../../api/project.api';
@@ -19,6 +20,16 @@ import { User } from '../../types/user.types';
 import { getUsersByDepartment } from '../../api/user.api';
 import { getDepartments } from '../../api/department.api';
 import { Department } from '../../types/department.types';
+import {
+  modalStyle,
+  modalTitleStyle,
+  modalContentStyle,
+  modalActionsStyle,
+  submitButtonStyle,
+  textFieldStyle,
+  formBoxStyle,
+} from '../../styles/components/projectModal.styles';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -40,10 +51,12 @@ const initialFormData: CreateProjectData = {
 const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProps) => {
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<CreateProjectData>(initialFormData);
 
   const fetchDepartments = useCallback(async () => {
     try {
+      setIsLoading(true);
       const departments = await getDepartments();
       
       if (Array.isArray(departments)) {
@@ -55,6 +68,8 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
     } catch (error) {
       console.error('부서 목록 조회 실패:', error);
       setDepartments([]);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -84,7 +99,8 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
     }
   };
 
-  const handleDepartmentChange = async (departmentId: string) => {
+  const handleDepartmentChange = async (event: SelectChangeEvent) => {
+    const departmentId = event.target.value as string;
     try {
       setFormData(prev => ({
         ...prev,
@@ -96,16 +112,11 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
         const response = await getUsersByDepartment(departmentId);
         if (response.success && response.data.users) {
           setDepartmentUsers(response.data.users);
-        } else {
-          setDepartmentUsers([]);
         }
-      } else {
-        setDepartmentUsers([]);
       }
     } catch (error) {
       console.error('부서별 사용자 목록 조회 실패:', error);
       setDepartmentUsers([]);
-      alert('부서별 사용자 목록을 불러오는데 실패했습니다.');
     }
   };
 
@@ -116,155 +127,148 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '80%',
-        maxWidth: 1200,
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 24,
-        p: 4,
-        maxHeight: '90vh',
-        overflow: 'auto',
-      }}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          새 프로젝트 생성
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={3}>
-            <TextField
-              label="프로젝트명"
-              required
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              fullWidth
-            />
-            <FormControl fullWidth required>
-              <InputLabel>담당 부서</InputLabel>
-              <Select
-                value={formData.department}
-                label="담당 부서"
-                onChange={(e) => handleDepartmentChange(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>부서 선택</em>
-                </MenuItem>
-                {departments.map((dept) => (
-                  <MenuItem key={dept._id} value={dept._id}>
-                    {dept.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Autocomplete
-              multiple
-              options={departmentUsers}
-              getOptionLabel={(option) => option.name}
-              value={departmentUsers.filter(user => 
-                formData.members.includes(user._id)
-              )}
-              onChange={(_, newValue) => {
-                setFormData(prev => ({
-                  ...prev,
-                  members: newValue.map(user => user._id)
-                }));
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="프로젝트 멤버"
-                  placeholder={departmentUsers.length ? "멤버 선택" : "부서를 먼저 선택해주세요"}
-                />
-              )}
-              renderTags={(tagValue, getTagProps) =>
-                tagValue.map((user, index) => {
-                  const { key, ...otherProps } = getTagProps({ index });
-                  return (
-                    <Chip
-                      key={key}
-                      label={user.name}
-                      {...otherProps}
-                    />
-                  );
-                })
-              }
-            />
-            <TextField
-              label="프로젝트 설명"
-              multiline
-              rows={5}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              fullWidth
-            />
-            <Box display="flex" gap={2}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{ sx: modalStyle }}
+    >
+      {isLoading ? (
+        <DialogContent>
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+            <CircularProgress />
+          </Box>
+        </DialogContent>
+      ) : (
+        <>
+          <DialogTitle sx={modalTitleStyle}>
+            프로젝트 생성
+          </DialogTitle>
+          <DialogContent sx={modalContentStyle}>
+            <Box sx={formBoxStyle}>
               <TextField
-                label="시작일"
-                type="date"
-                required
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                InputLabelProps={{ shrink: true }}
+                label="프로젝트명"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 fullWidth
-              />
-              <TextField
-                label="종료일"
-                type="date"
                 required
-                value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
+                sx={textFieldStyle}
               />
-            </Box>
-            <Box display="flex" gap={2}>
-              <FormControl fullWidth>
-                <InputLabel>상태</InputLabel>
+
+              <FormControl fullWidth sx={textFieldStyle}>
+                <InputLabel>담당 부서</InputLabel>
                 <Select
-                  value={formData.status}
-                  label="상태"
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as Project['status'] })}
+                  value={formData.department}
+                  label="담당 부서"
+                  onChange={handleDepartmentChange}
                 >
-                  <MenuItem value="준비">준비</MenuItem>
-                  <MenuItem value="진행중">진행중</MenuItem>
-                  <MenuItem value="완료">완료</MenuItem>
-                  <MenuItem value="보류">보류</MenuItem>
+                  {departments.map((dept) => (
+                    <MenuItem key={dept._id} value={dept._id}>
+                      {dept.name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
+
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <TextField
+                  label="시작일"
+                  type="date"
+                  required
+                  value={formData.startDate}
+                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  sx={textFieldStyle}
+                />
+                <TextField
+                  label="종료일"
+                  type="date"
+                  required
+                  value={formData.endDate}
+                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  sx={textFieldStyle}
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <FormControl fullWidth sx={textFieldStyle}>
+                  <InputLabel>상태</InputLabel>
+                  <Select
+                    value={formData.status}
+                    label="상태"
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as Project['status'] })}
+                  >
+                    <MenuItem value="준비">준비</MenuItem>
+                    <MenuItem value="진행중">진행중</MenuItem>
+                    <MenuItem value="완료">완료</MenuItem>
+                    <MenuItem value="보류">보류</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  label="진행률"
+                  type="number"
+                  value={formData.progress}
+                  onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
+                  InputProps={{ inputProps: { min: 0, max: 100 } }}
+                  fullWidth
+                  sx={textFieldStyle}
+                />
+              </Box>
+
+              <FormControl fullWidth sx={textFieldStyle}>
+                <InputLabel>프로젝트 멤버</InputLabel>
+                <Select
+                  multiple
+                  value={formData.members}
+                  onChange={(e) => setFormData({ ...formData, members: e.target.value as string[] })}
+                  label="프로젝트 멤버"
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((memberId) => {
+                        const user = departmentUsers.find(u => u._id === memberId);
+                        return user ? (
+                          <Chip key={memberId} label={user.name} />
+                        ) : null;
+                      })}
+                    </Box>
+                  )}
+                >
+                  {departmentUsers.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      {user.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               <TextField
-                label="진행률"
-                type="number"
-                value={formData.progress}
-                onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
-                InputProps={{ inputProps: { min: 0, max: 100 } }}
+                label="설명"
+                multiline
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 fullWidth
+                sx={textFieldStyle}
               />
             </Box>
-            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 2 }}>
-              <Button variant="outlined" onClick={onClose}>
-                취소
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  backgroundColor: '#F4A261',
-                  '&:hover': {
-                    backgroundColor: '#E76F51',
-                  },
-                }}
-              >
-                생성
-              </Button>
-            </Box>
-          </Stack>
-        </form>
-      </Box>
-    </Modal>
+          </DialogContent>
+          <DialogActions sx={modalActionsStyle}>
+            <Button onClick={handleClose}>취소</Button>
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              sx={submitButtonStyle}
+            >
+              생성
+            </Button>
+          </DialogActions>
+        </>
+      )}
+    </Dialog>
   );
 };
 

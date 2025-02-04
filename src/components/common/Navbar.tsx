@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
+  Box, 
+  Drawer, 
   List, 
   ListItemIcon, 
   ListItemText, 
-  Tooltip, 
   useTheme, 
   useMediaQuery,
-  Box 
+  ListItemButton
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -18,11 +19,18 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import ListIcon from '@mui/icons-material/List';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import logo from '../../assets/images/logo.png';
-import { MenuItem } from '../../types/navbar.types';
 import { 
-  StyledDrawer, 
-  StyledListItem, 
-} from '../../styles/navbar.styles';
+  drawerStyle, 
+  miniDrawerStyle, 
+  logoStyle, 
+  listItemStyle, 
+  selectedListItemStyle, 
+  listItemIconStyle, 
+  listItemTextStyle,
+  navListStyle,
+  bottomListStyle,
+  logoItemStyle
+} from '../../styles/components/navbar.styles';
 
 interface NavbarProps {
   onOpenChange: (open: boolean) => void;
@@ -52,164 +60,79 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
     navigate('/');
   };
 
-  const getMenuItems = () => {
-    const baseItems: MenuItem[] = [
-      { 
-        type: 'logo',
-        text: '',
-        icon: (
+  const mainMenuItems = [
+    { text: '프로젝트 현황', icon: <CalendarMonthIcon />, path: '/projectCalendar' },
+    { text: '프로젝트 목록', icon: <ListAltIcon />, path: '/projects' },
+    { text: '업무 목록', icon: <ListIcon />, path: '/tasks' },
+  ];
+
+  const bottomMenuItems = isLoggedIn ? [
+    { text: '알림 내역', icon: <NotificationsIcon />, path: '/notifications' },
+    { text: '마이페이지', icon: <AccountCircleIcon />, path: '/mypage' },
+    { text: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout }
+  ] : [
+    { text: '로그인', icon: <LoginIcon />, path: '/login' },
+    { text: '회원가입', icon: <PersonAddIcon />, path: '/signup' }
+  ];
+
+  return (
+    <Drawer
+      variant="permanent"
+      sx={open ? drawerStyle : miniDrawerStyle}
+      onMouseEnter={() => !isMobile && setOpen(true)}
+      onMouseLeave={() => !isMobile && setOpen(false)}
+    >
+      <List sx={navListStyle}>
+        {/* 로고 */}
+        <ListItemButton
+          key="logo"
+          onClick={() => navigate('/')}
+          sx={logoItemStyle}
+        >
           <Box
             component="img"
             src={logo}
-            sx={{
-              width: open ? 150 : 24,
-              height: 'auto',
-              objectFit: 'contain',
-              transition: theme.transitions.create('width', {
-                duration: theme.transitions.duration.shorter,
-              }),
-            }}
+            sx={logoStyle(open)}
           />
-        ), 
-        path: '/' 
-      }
-    ];
+        </ListItemButton>
 
-    const mainMenuItems: MenuItem[] = [
-      { text: '프로젝트 현황', icon: <CalendarMonthIcon />, path: '/projectCalendar' },
-      { text: '프로젝트 목록', icon: <ListAltIcon />, path: '/projects' },
-      { text: '업무 목록', icon: <ListIcon />, path: '/tasks' },
-    ];
-
-    const bottomMenuItems: MenuItem[] = isLoggedIn ? [
-      { text: '알림 내역', icon: <NotificationsIcon />, path: '/notifications' },
-      { text: '마이페이지', icon: <AccountCircleIcon />, path: '/mypage' },
-      { text: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout }
-    ] : [
-      { text: '로그인', icon: <LoginIcon />, path: '/login' },
-      { text: '회원가입', icon: <PersonAddIcon />, path: '/signup' }
-    ];
-
-    return { baseItems, mainMenuItems, bottomMenuItems };
-  };
-
-  const { baseItems, mainMenuItems, bottomMenuItems } = getMenuItems();
-
-  const handleMouseEnter = () => {
-    if (!isMobile) setOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (!isMobile) setOpen(false);
-  };
-
-  const handleItemClick = (item: MenuItem) => {
-    if (item.onClick) {
-      item.onClick();
-    } else if (item.path) {
-      navigate(item.path);
-    }
-    if (isMobile) setOpen(false);
-  };
-
-  return (
-    <StyledDrawer
-      variant={isMobile ? "temporary" : "permanent"}
-      open={open}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClose={() => setOpen(false)}
-    >
-      <List sx={{ mt: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {/* 로고 */}
-        {baseItems.map((item, index) => (
-          <Box 
-            key={index} 
-            sx={{ 
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-              '& .MuiListItem-root': {
-                justifyContent: 'center',
-                px: 0,
-              },
-              '& .MuiListItemIcon-root': {
-                minWidth: 'auto',
-                justifyContent: 'center'
-              }
-            }}
+        {/* 메인 메뉴 */}
+        {mainMenuItems.map((item) => (
+          <ListItemButton
+            key={item.path}
+            onClick={() => item.path && navigate(item.path)}
+            sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
           >
-            <Tooltip title={!open && item.text ? item.text : ''} placement="right">
-              <StyledListItem
-                onClick={() => handleItemClick(item)}
-                active={item.path && location.pathname === item.path ? 1 : 0}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                {item.text && (
-                  <ListItemText 
-                    primary={item.text}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      transition: theme.transitions.create('opacity', {
-                        duration: theme.transitions.duration.shorter,
-                      }),
-                    }} 
-                  />
-                )}
-              </StyledListItem>
-            </Tooltip>
-          </Box>
+            <ListItemIcon sx={listItemIconStyle}>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText 
+              primary={item.text} 
+              sx={listItemTextStyle(open)}
+            />
+          </ListItemButton>
         ))}
 
-        {/* 메인 메뉴 아이템 - 로그인 상태일 때만 표시 */}
-        {isLoggedIn && (
-          <Box sx={{ mt: 2 }}>
-            {mainMenuItems.map((item, index) => (
-              <Tooltip key={index} title={!open && item.text ? item.text : ''} placement="right">
-                <StyledListItem
-                  onClick={() => handleItemClick(item)}
-                  active={item.path && location.pathname === item.path ? 1 : 0}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText 
-                    primary={item.text}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      transition: theme.transitions.create('opacity', {
-                        duration: theme.transitions.duration.shorter,
-                      }),
-                    }} 
-                  />
-                </StyledListItem>
-              </Tooltip>
-            ))}
-          </Box>
-        )}
-
-        {/* 하단 메뉴 아이템 */}
-        <Box sx={{ mt: 'auto' }}>
-          {bottomMenuItems.map((item, index) => (
-            <Tooltip key={index} title={!open && item.text ? item.text : ''} placement="right">
-              <StyledListItem
-                onClick={() => handleItemClick(item)}
-                active={item.path && location.pathname === item.path ? 1 : 0}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText 
-                  primary={item.text}
-                  sx={{
-                    opacity: open ? 1 : 0,
-                    transition: theme.transitions.create('opacity', {
-                      duration: theme.transitions.duration.shorter,
-                    }),
-                  }} 
-                />
-              </StyledListItem>
-            </Tooltip>
+        {/* 하단 메뉴 */}
+        <Box sx={bottomListStyle}>
+          {bottomMenuItems.map((item) => (
+            <ListItemButton
+              key={item.text}
+              onClick={item.onClick ? item.onClick : item.path ? () => navigate(item.path) : undefined}
+              sx={location.pathname === item.path ? selectedListItemStyle : listItemStyle}
+            >
+              <ListItemIcon sx={listItemIconStyle}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.text} 
+                sx={listItemTextStyle(open)}
+              />
+            </ListItemButton>
           ))}
         </Box>
       </List>
-    </StyledDrawer>
+    </Drawer>
   );
 };
 

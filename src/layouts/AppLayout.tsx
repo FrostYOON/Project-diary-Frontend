@@ -4,6 +4,7 @@ import Navbar from '../components/common/Navbar';
 import RootLayout from './RootLayout';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { rootLayoutStyle, contentLayoutStyle, mainContentStyle } from '../styles/layouts/layout.styles';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -18,25 +19,16 @@ const AppLayout = ({ children, hideHeader = false }: AppLayoutProps) => {
 
   return (
     <RootLayout isOverlayVisible={false}>
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box sx={rootLayoutStyle}>
         <Box sx={{ width: navWidth, flexShrink: 0 }}>
           <Navbar onOpenChange={setIsNavExpanded} />
         </Box>
-        <Box sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column',
-          transition: 'margin-left 0.2s ease-in-out',
-          marginLeft: '0',
-          width: `calc(100% - ${navWidth})`,
+        <Box sx={{
+          ...contentLayoutStyle,
+          width: `calc(100% - ${navWidth})`
         }}>
           {!hideHeader && !isMainPage && <Header />}
-          <Box sx={{ 
-            flex: 1, 
-            overflow: 'auto',
-            height: isMainPage || hideHeader ? '100vh' : 'calc(100vh - 63px)',
-            p: 1
-          }}>
+          <Box sx={mainContentStyle}>
             {children}
           </Box>
         </Box>
