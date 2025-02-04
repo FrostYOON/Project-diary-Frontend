@@ -68,11 +68,15 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
           });
 
           if (isValidDepartment) {
-            await handleDepartmentChange({ 
-              target: { 
-                value: departmentId 
-              } 
-            } as SelectChangeEvent);
+            const response = await getUsersByDepartment(departmentId);
+            if (response.success && response.data.users) {
+              setDepartmentUsers(response.data.users);
+              // 프로젝트의 멤버 ID 배열을 설정
+              const memberIds = project.members?.map(member => 
+                typeof member === 'object' ? member._id : member
+              ) || [];
+              setSelectedMembers(memberIds);
+            }
           }
         }
       } catch (error) {
@@ -237,7 +241,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                       {selected.map((memberId) => {
                         const user = departmentUsers.find(u => u._id === memberId);
                         return user ? (
-                          <Chip key={memberId} label={user.name} />
+                          <Chip key={memberId} label={user.name}/>
                         ) : null;
                       })}
                     </Box>
