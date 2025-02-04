@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, useCallback } from 'react';
 import { Notification } from '../../types/notification.types';
 import { getNotifications, markNotificationAsRead, deleteNotification as deleteNotificationApi } from '../../api/notification';
 import { NotificationContext } from '../../contexts/NotificationContext';
@@ -6,19 +6,29 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const isLoggedIn = !!localStorage.getItem('accessToken');
 
-  const refreshNotifications = async () => {
+  const refreshNotifications = useCallback(async () => {
+    if (!isLoggedIn) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     try {
-      const data = await getNotifications(); // 서버에서 이미 필터링된 알림만 받아옴
-      
+      const data = await getNotifications();
       setNotifications(data);
       setUnreadCount(data.filter(n => n.recipients?.length > 0).length);
     } catch (error) {
       console.error('알림 조회 실패:', error);
+      setNotifications([]);
+      setUnreadCount(0);
     }
-  };
+  }, [isLoggedIn]);
 
   const markAsRead = async (notificationId: string) => {
+    if (!isLoggedIn) return;
+
     try {
       const notification = notifications.find(n => n._id === notificationId);
       if (notification?.readBy && notification.readBy.length > 0) {
@@ -63,10 +73,12 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    refreshNotifications();
-    const interval = setInterval(refreshNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (isLoggedIn) {
+      refreshNotifications();
+      const interval = setInterval(refreshNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoggedIn, refreshNotifications]);
 
   return (
     <NotificationContext.Provider value={{ 
