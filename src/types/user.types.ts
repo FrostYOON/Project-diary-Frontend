@@ -5,6 +5,7 @@ export interface User {
   department: string;
   phone: string;
   birth: string;
+  registerType?: 'normal' | 'google';
   // ... other fields ...
 }
 
@@ -14,4 +15,4 @@ export interface UserResponse {
   data: {
     users: User[];
   };
-} 
+}
