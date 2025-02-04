@@ -7,14 +7,16 @@ import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import RootLayout from "./layouts/RootLayout";
-import AuthCallback from './pages/auth/AuthCallback';
+import AuthCallback from "./pages/auth/AuthCallback";
 import ProjectListPage from "./pages/projects/ProjectListPage";
-import PersonalTaskPage from './pages/tasks/PersonalTaskPage';
-import NotificationListPage from './pages/notifications/NotificationListPage';
-import AppLayout from './layouts/AppLayout';
-import AuthLayout from './layouts/AuthLayout';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import { NotificationProvider } from './contexts/NotificationProvider';
+import PersonalTaskPage from "./pages/tasks/PersonalTaskPage";
+import NotificationListPage from "./pages/notifications/NotificationListPage";
+import AppLayout from "./layouts/AppLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { NotificationProvider } from "./contexts/NotificationProvider";
+import MyPage from "./pages/my/myPage";
+import ChangePassword from "./pages/my/ChangePassword";
 
 const theme = createTheme({
   palette: {
@@ -27,7 +29,7 @@ const theme = createTheme({
   },
 });
 
-const ProjectCalendar = lazy(() => import('./pages/projects/ProjectCalendar'));
+const ProjectCalendar = lazy(() => import("./pages/projects/ProjectCalendar"));
 
 const App: React.FC = () => {
   const [isOverlayVisible, setOverlayVisible] = useState(false);
@@ -48,11 +50,14 @@ const App: React.FC = () => {
         />
         <Router>
           <Routes>
-            <Route path="/" element={
-              <AppLayout hideHeader>
-                <MainPage />
-              </AppLayout>
-            } />
+            <Route
+              path="/"
+              element={
+                <AppLayout hideHeader>
+                  <MainPage />
+                </AppLayout>
+              }
+            />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route
               path="/login"
@@ -74,30 +79,65 @@ const App: React.FC = () => {
                 </RootLayout>
               }
             />
-            <Route path="/*" element={
-              <AppLayout>
-                <Routes>
-                  <Route path="notifications" element={<NotificationListPage />} />
-                  <Route path="projects" element={
-                    <ProtectedRoute>
-                      <ProjectListPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="tasks" element={
-                    <ProtectedRoute>
-                      <PersonalTaskPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="projectCalendar" element={
-                    <ProtectedRoute>
-                      <Suspense fallback={<div>Loading...</div>}>
-                        <ProjectCalendar />
-                      </Suspense>
-                    </ProtectedRoute>
-                  } />
-                </Routes>
-              </AppLayout>
-            } />
+            <Route
+              path="/*"
+              element={
+                <AppLayout>
+                  <Routes>
+                    <Route
+                      path="notifications"
+                      element={
+                        <ProtectedRoute>
+                          <NotificationListPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="projectCalendar"
+                      element={
+                        <ProtectedRoute>
+                          <Suspense fallback={<div>Loading...</div>}>
+                            <ProjectCalendar />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="projects"
+                      element={
+                        <ProtectedRoute>
+                          <ProjectListPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="tasks"
+                      element={
+                        <ProtectedRoute>
+                          <PersonalTaskPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/mypage"
+                      element={
+                        <ProtectedRoute>
+                          <MyPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/my/change-password"
+                      element={
+                        <ProtectedRoute>
+                          <ChangePassword />
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Routes>
+                </AppLayout>
+              }
+            />
           </Routes>
         </Router>
       </ThemeProvider>

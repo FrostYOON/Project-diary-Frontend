@@ -1,11 +1,5 @@
 import { axiosInstance } from './axios.config';
-import { Department } from '../types/department.types';
-
-interface DepartmentResponse {
-  success: boolean;
-  data: Department[];
-  message?: string;
-}
+import { Department, DepartmentResponse } from '../types/department.types';
 
 export const getDepartments = async (): Promise<Department[]> => {
   try {
@@ -13,7 +7,8 @@ export const getDepartments = async (): Promise<Department[]> => {
     if (!response.data.success) {
       throw new Error(response.data.message || '부서 목록을 불러오는데 실패했습니다.');
     }
-    return response.data.data;
+    // departments 배열 반환
+    return response.data.data.departments;
   } catch (error) {
     console.error('부서 목록 조회 실패:', error);
     throw error;
