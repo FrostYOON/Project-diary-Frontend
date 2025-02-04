@@ -14,6 +14,7 @@ import NotificationListPage from './pages/notifications/NotificationListPage';
 import AppLayout from './layouts/AppLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import { NotificationProvider } from './contexts/NotificationProvider';
 
 const theme = createTheme({
   palette: {
@@ -32,92 +33,75 @@ const App: React.FC = () => {
   const [isOverlayVisible, setOverlayVisible] = useState(false);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalStyles
-        styles={{
-          "html, body, #root": {
-            width: "100%",
-            height: "100%",
-            margin: 0,
-            padding: 0,
-          },
-        }}
-      />
-      <Router>
-        <Routes>
-          <Route path="/" element={
-            <AppLayout>
-              <MainPage />
-            </AppLayout>
-          } />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          
-          <Route
-            path="/login"
-            element={
-              <RootLayout isOverlayVisible={isOverlayVisible}>
-                <AuthLayout>
-                  <LoginPage onFormFocus={() => setOverlayVisible(true)} />
-                </AuthLayout>
-              </RootLayout>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <RootLayout isOverlayVisible={isOverlayVisible}>
-                <AuthLayout>
-                  <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
-                </AuthLayout>
-              </RootLayout>
-            }
-          />
-          
-          <Route 
-            path="/projects" 
-            element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <ProjectListPage />
-                </AppLayout>
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/tasks"
-            element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <PersonalTaskPage />
-                </AppLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route 
-            path="/projectCalendar" 
-            element={
-              <ProtectedRoute>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <ProjectCalendar />
-                </Suspense>
-              </ProtectedRoute>
-            } 
-          />
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <NotificationListPage />
-                </AppLayout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <NotificationProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <GlobalStyles
+          styles={{
+            "html, body, #root": {
+              width: "100%",
+              height: "100%",
+              margin: 0,
+              padding: 0,
+            },
+          }}
+        />
+        <Router>
+          <Routes>
+            <Route path="/" element={
+              <AppLayout hideHeader>
+                <MainPage />
+              </AppLayout>
+            } />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route
+              path="/login"
+              element={
+                <RootLayout isOverlayVisible={isOverlayVisible}>
+                  <AuthLayout>
+                    <LoginPage onFormFocus={() => setOverlayVisible(true)} />
+                  </AuthLayout>
+                </RootLayout>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <RootLayout isOverlayVisible={isOverlayVisible}>
+                  <AuthLayout>
+                    <SignUpPage onFormFocus={() => setOverlayVisible(true)} />
+                  </AuthLayout>
+                </RootLayout>
+              }
+            />
+            <Route path="/*" element={
+              <AppLayout>
+                <Routes>
+                  <Route path="notifications" element={<NotificationListPage />} />
+                  <Route path="projects" element={
+                    <ProtectedRoute>
+                      <ProjectListPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="tasks" element={
+                    <ProtectedRoute>
+                      <PersonalTaskPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="projectCalendar" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <ProjectCalendar />
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                </Routes>
+              </AppLayout>
+            } />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </NotificationProvider>
   );
 };
 

@@ -16,16 +16,12 @@ export const authService = {
         birth: userData.birthDate,  // birthDate를 birth로 변경
       };
       
-      console.log('Sending signup data:', signupData);
-      
       const response = await axios.post(`${API_URL}/auth/signup`, signupData, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
       });
-      
-      console.log('Server Response:', response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -33,18 +29,18 @@ export const authService = {
       }
       throw error;
     }
-  }
-};
+  },
 
-export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  try {
-    const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || '로그인에 실패했습니다.');
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    try {
+      const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || '로그인에 실패했습니다.');
+      }
+      throw error;
     }
-    throw error;
   }
 };
 

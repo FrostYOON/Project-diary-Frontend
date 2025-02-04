@@ -1,7 +1,7 @@
 export interface WeatherInfo {
   city: string;
   temp: number;
-  description: string;
+  weather: string;
   icon: string;
 }
 
