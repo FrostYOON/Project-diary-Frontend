@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   department: string;
+  phone: string;
+  birth: string;
   // ... other fields ...
 }
 
