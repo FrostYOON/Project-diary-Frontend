@@ -1,12 +1,5 @@
-import axios from 'axios';
 import { Task, TaskFormData, ProjectOption } from '../types/task.types';
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-// axios 인스턴스 생성
-const axiosInstance = axios.create({
-  baseURL: API_URL
-});
+import { axiosInstance } from '../config/axios.config';
 
 // 요청 인터셉터 추가
 axiosInstance.interceptors.request.use(

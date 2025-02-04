@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authService } from '../api/auth.api';
 import { LoginCredentials } from '../types/auth.types';
+import { API_BASE_URL } from '../config/config';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -42,8 +43,7 @@ export const useAuth = () => {
   };
 
   const handleGoogleLogin = () => {
-    const API_URL = import.meta.env.VITE_API_URL;
-    window.location.href = `${API_URL}/auth/login/google`;
+    window.location.href = `${API_BASE_URL}/auth/login/google`;
   };
 
   return {

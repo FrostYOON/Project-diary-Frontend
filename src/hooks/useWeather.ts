@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import axios from 'axios';
+import { axiosInstance } from '../config/axios.config';
 import { WeatherInfo } from '../types/weather.types';
 import { WEATHER_CONFIG, WEATHER_API } from '../constants/weathers';
 
@@ -11,9 +11,7 @@ export const useWeather = () => {
 
   const fetchWeather = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}${WEATHER_API.ENDPOINT}`
-      );
+      const response = await axiosInstance.get(WEATHER_API.ENDPOINT);
       if (response.data.success && response.data.data?.length > 0) {
         setWeatherList(response.data.data);
       }

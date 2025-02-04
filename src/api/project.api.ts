@@ -1,4 +1,4 @@
-import { axiosInstance } from './axios.config';
+import { axiosInstance } from '../config/axios.config';
 import { Project, ProjectResponse, CreateProjectData } from '../types/project.types';
 
 // 프로젝트 목록 조회

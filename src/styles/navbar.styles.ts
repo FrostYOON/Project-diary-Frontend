@@ -11,14 +11,18 @@ export const StyledDrawer = styled(Drawer, {
   width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
   flexShrink: 0,
   whiteSpace: 'nowrap',
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
   '& .MuiDrawer-paper': {
     width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
     backgroundColor: '#D4A373',
     backdropFilter: 'blur(5px)',
     border: 'none',
     transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
   },
