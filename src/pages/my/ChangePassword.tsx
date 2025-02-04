@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -9,7 +9,7 @@ import {
   Container,
   Stack,
 } from '@mui/material';
-import { changePassword } from '../../api/user.api';
+import { changePassword, getCurrentUser } from '../../api/user.api';
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -23,6 +23,25 @@ const ChangePassword = () => {
     newPassword: '',
     confirmNewPassword: '',
   });
+
+  useEffect(() => {
+    const checkUserAccess = async () => {
+      try {
+        const user = await getCurrentUser();
+        console.log('User data in ChangePassword:', user);
+        console.log('User registerType:', user.registerType);
+        
+        // 일반 이메일 로그인 사용자가 아닌 경우 접근 제한
+        if (!user || user.registerType !== 'normal') {
+          navigate('/mypage');
+        }
+      } catch (error) {
+        console.error('사용자 정보 확인 실패:', error);
+      }
+    };
+
+    checkUserAccess();
+  }, [navigate]);
 
   const validateForm = () => {
     const newErrors = {
