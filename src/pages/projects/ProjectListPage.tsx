@@ -4,6 +4,7 @@ import { Box, Button, LinearProgress, Typography, Chip } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import { getProjects } from '../../api/project.api';
+import { getUserRole } from '../../api/user.api';
 import { Project } from '../../types/project.types';
 import CreateProjectModal from '../../components/projects/CreateProjectModal';
 import ProjectUpdateModal from '../../components/projects/ProjectUpdateModal';
@@ -22,13 +23,18 @@ const ProjectListPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string>('');
 
   const fetchInitialData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const projects = await retryRequest(getProjects);
+      const [projects, role] = await Promise.all([
+        retryRequest(getProjects),
+        getUserRole()
+      ]);
 
       setProjects(projects);
+      setUserRole(role);
     } catch (error) {
       console.error('데이터 로딩 실패:', error);
       setProjects([]);
@@ -67,7 +73,10 @@ const ProjectListPage = () => {
       align: 'center',
       renderCell: (params) => (
         <div
-          style={{ cursor: 'pointer', color: '#F4A261' }}
+          style={{ 
+            cursor: 'pointer',
+            color: '#F4A261'
+          }}
           onClick={() => {
             setSelectedProject(params.row);
             setIsUpdateModalOpen(true);
@@ -190,14 +199,16 @@ const ProjectListPage = () => {
           프로젝트 목록
         </Typography>
         <Box sx={projectButtonContainerStyle}>
-          <Button
-            variant="contained"
-            sx={primaryButtonStyle}
-            startIcon={<AddIcon />}
-            onClick={() => setIsModalOpen(true)}
-          >
-            프로젝트 추가
-          </Button>
+          {userRole !== 'user' && (
+            <Button
+              variant="contained"
+              sx={primaryButtonStyle}
+              startIcon={<AddIcon />}
+              onClick={() => setIsModalOpen(true)}
+            >
+              프로젝트 추가
+            </Button>
+          )}
         </Box>
       </Box>
       <Box sx={{ width: '100%', height: 'calc(100vh - 140px)' }}>
@@ -254,6 +265,7 @@ const ProjectListPage = () => {
         }}
         project={selectedProject}
         onSuccess={handleDetailSuccess}
+        userRole={userRole}
       />
     </Box>
   );

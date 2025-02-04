@@ -36,9 +36,10 @@ interface ProjectUpdateModalProps {
   onClose: () => void;
   project: Project | null;
   onSuccess: (data: Partial<Project>) => void;
+  userRole: string;
 }
 
-const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdateModalProps) => {
+const ProjectUpdateModal = ({ open, onClose, project, onSuccess, userRole }: ProjectUpdateModalProps) => {
   const [formData, setFormData] = useState<Partial<Project>>(project || {});
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -155,7 +156,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
       ) : (
         <>
           <DialogTitle sx={modalTitleStyle}>
-            프로젝트 수정
+            {userRole === 'user' ? '프로젝트 상세' : '프로젝트 수정'}
           </DialogTitle>
           <DialogContent sx={modalContentStyle}>
             <Box sx={formBoxStyle}>
@@ -166,6 +167,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                 fullWidth
                 required
                 sx={textFieldStyle}
+                disabled={userRole === 'user'}
               />
 
               <FormControl fullWidth sx={textFieldStyle}>
@@ -174,6 +176,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                   value={typeof formData.department === 'object' ? formData.department._id : (formData.department || '')}
                   label="담당 부서"
                   onChange={handleDepartmentChange}
+                  disabled={userRole === 'user'}
                 >
                   {departments.map((dept) => (
                     <MenuItem key={dept._id} value={dept._id}>
@@ -192,6 +195,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                   InputLabelProps={{ shrink: true }}
                   fullWidth
                   sx={textFieldStyle}
+                  disabled={userRole === 'user'}
                 />
                 <TextField
                   label="종료일"
@@ -201,6 +205,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                   InputLabelProps={{ shrink: true }}
                   fullWidth
                   sx={textFieldStyle}
+                  disabled={userRole === 'user'}
                 />
               </Box>
 
@@ -211,6 +216,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                     value={formData.status || ''}
                     label="상태"
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as Project['status'] })}
+                    disabled={userRole === 'user'}
                   >
                     <MenuItem value="준비">준비</MenuItem>
                     <MenuItem value="진행중">진행중</MenuItem>
@@ -226,6 +232,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                   InputProps={{ inputProps: { min: 0, max: 100 } }}
                   fullWidth
                   sx={textFieldStyle}
+                  disabled={userRole === 'user'}
                 />
               </Box>
 
@@ -246,6 +253,7 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                       })}
                     </Box>
                   )}
+                  disabled={userRole === 'user'}
                 >
                   {departmentUsers.map((user) => (
                     <MenuItem key={user._id} value={user._id}>
@@ -263,23 +271,30 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 fullWidth
                 sx={textFieldStyle}
+                disabled={userRole === 'user'}
               />
             </Box>
           </DialogContent>
           <DialogActions sx={modalActionsStyle}>
-            <Box>
-              <Button onClick={handleDelete} color="error">삭제</Button>
-            </Box>
-            <Box>
-              <Button onClick={onClose}>취소</Button>
-              <Button
-                onClick={handleUpdate}
-                variant="contained"
-                sx={submitButtonStyle}
-              >
-                수정
-              </Button>
-            </Box>
+            {userRole === 'user' ? (
+              <Button onClick={onClose}>닫기</Button>
+            ) : (
+              <>
+                <Box>
+                  <Button onClick={handleDelete} color="error">삭제</Button>
+                </Box>
+                <Box>
+                  <Button onClick={onClose}>취소</Button>
+                  <Button
+                    onClick={handleUpdate}
+                    variant="contained"
+                    sx={submitButtonStyle}
+                  >
+                    수정
+                  </Button>
+                </Box>
+              </>
+            )}
           </DialogActions>
         </>
       )}
