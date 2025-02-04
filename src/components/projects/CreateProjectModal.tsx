@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -14,10 +14,11 @@ import {
   Chip,
 } from '@mui/material';
 import { CreateProjectData, Project } from '../../types/project.types';
-import { DEPARTMENTS } from '../../constants/departments';
 import { createProject } from '../../api/project.api';
 import { User } from '../../types/user.types';
 import { getUsersByDepartment } from '../../api/user.api';
+import { getDepartments } from '../../api/department.api';
+import { Department } from '../../types/department.types';
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -27,6 +28,7 @@ interface CreateProjectModalProps {
 
 const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProps) => {
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [formData, setFormData] = useState<CreateProjectData>({
     title: '',
     department: '',
@@ -37,6 +39,28 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
     progress: 0,
     members: [],
   });
+
+  const fetchDepartments = useCallback(async () => {
+    try {
+      const departments = await getDepartments();
+      
+      if (Array.isArray(departments)) {
+        setDepartments(departments);
+      } else {
+        console.error('부서 목록이 배열이 아님:', departments);
+        setDepartments([]);
+      }
+    } catch (error) {
+      console.error('부서 목록 조회 실패:', error);
+      setDepartments([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      fetchDepartments();
+    }
+  }, [open, fetchDepartments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +140,10 @@ const CreateProjectModal = ({ open, onClose, onSuccess }: CreateProjectModalProp
                 label="담당 부서"
                 onChange={(e) => handleDepartmentChange(e.target.value)}
               >
-                {DEPARTMENTS.map((dept) => (
+                <MenuItem value="">
+                  <em>부서 선택</em>
+                </MenuItem>
+                {departments.map((dept) => (
                   <MenuItem key={dept._id} value={dept._id}>
                     {dept.name}
                   </MenuItem>

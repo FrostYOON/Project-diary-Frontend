@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -30,41 +30,43 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
   const [formData, setFormData] = useState<Partial<Project>>(project || {});
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-
-  const fetchDepartments = useCallback(async () => {
-    try {
-      const { departments } = await getDepartments() as unknown as { departments: Department[] };
-      setDepartments(departments);
-    } catch (error) {
-      console.error('부서 목록 조회 실패:', error);
-      setDepartments([]);
-    }
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchDepartments();
-  }, [fetchDepartments]);
+    const initializeData = async () => {
+      if (!open) return;
+      
+      try {
+        setIsLoading(true);
+        const deps = await getDepartments();
+        setDepartments(deps);
 
-  useEffect(() => {
-    if (project) {
-      const departmentId = typeof project.department === 'object' 
-        ? project.department._id 
-        : project.department;
+        if (project) {
+          const departmentId = typeof project.department === 'object' 
+            ? project.department._id 
+            : project.department;
 
-      setFormData({
-        ...project,
-        department: departmentId,
-        members: project.members?.map(member => 
-          typeof member === 'object' ? member._id : member
-        )
-      });
+          // 부서 ID가 유효한지 확인
+          const isValidDepartment = deps.some(dep => dep._id === departmentId);
+          
+          setFormData({
+            ...project,
+            department: isValidDepartment ? departmentId : ''
+          });
 
-      // 부서 사용자 목록 즉시 로드
-      if (departmentId) {
-        handleDepartmentChange(departmentId);
+          if (isValidDepartment) {
+            await handleDepartmentChange(departmentId);
+          }
+        }
+      } catch (error) {
+        console.error('초기 데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, [project]);
+    };
+
+    initializeData();
+  }, [open, project]);
 
   const handleUpdate = async () => {
     if (!project?._id) return;
@@ -137,18 +139,16 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess }: ProjectUpdate
           <FormControl fullWidth>
             <InputLabel>담당 부서</InputLabel>
             <Select
-              value={typeof formData.department === 'object' ? formData.department._id : formData.department || ''}
+              value={formData.department || ''}
               label="담당 부서"
               onChange={(e) => handleDepartmentChange(e.target.value as string)}
+              disabled={isLoading}
             >
               <MenuItem value="">
                 <em>부서 선택</em>
               </MenuItem>
-              {departments && departments.length > 0 && departments.map((dept: Department) => (
-                <MenuItem 
-                  key={dept._id}
-                  value={dept._id}
-                >
+              {departments.map((dept) => (
+                <MenuItem key={dept._id} value={dept._id}>
                   {dept.name}
                 </MenuItem>
               ))}
