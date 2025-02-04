@@ -6,5 +6,7 @@ export interface Department {
 export interface DepartmentResponse {
   success: boolean;
   message: string;
-  data: Department[];
+  data: {
+    departments: Department[];
+  };
 }
