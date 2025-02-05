@@ -8,7 +8,8 @@ import {
   ListItemText, 
   useTheme, 
   useMediaQuery,
-  ListItemButton
+  ListItemButton,
+  Avatar
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -34,7 +35,8 @@ import {
   mainMenuSectionStyle
 } from '../../styles/components/navbar.styles';
 import { authService } from '../../api/auth.api';
-
+import { getCurrentUser } from '../../api/user.api';
+import { User } from '../../types/user.types';
 interface NavbarProps {
   onOpenChange: (open: boolean) => void;
 }
@@ -42,6 +44,7 @@ interface NavbarProps {
 const Navbar = ({ onOpenChange }: NavbarProps) => {
   const [open, setOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
@@ -56,6 +59,21 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
   useEffect(() => {
     onOpenChange(open);
   }, [open, onOpenChange]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('사용자 정보 조회 실패:', error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchUser();
+    }
+  }, [isLoggedIn]);
 
   const handleLogout = async () => {
     try {
@@ -79,7 +97,22 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
 
   const bottomMenuItems = isLoggedIn ? [
     { text: '알림 내역', icon: <NotificationsIcon />, path: '/notifications' },
-    { text: '마이페이지', icon: <AccountCircleIcon />, path: '/mypage' },
+    { 
+      text: '마이페이지', 
+      icon: user?.profileImage ? (
+        <Avatar 
+          src={user.profileImage} 
+          sx={{ 
+            width: 24, 
+            height: 24,
+            // MUI 아이콘과 크기 맞추기
+          }} 
+        />
+      ) : (
+        <AccountCircleIcon />
+      ), 
+      path: '/mypage' 
+    },
     { text: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout }
   ] : [
     { text: '로그인', icon: <LoginIcon />, path: '/login' },

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import google_icon from '@/assets/images/google_icon.png';
 import naver_icon from '@/assets/images/naver_icon.png';
+import kakao_icon from '@/assets/images/kakao_icon.png';
 import { Container, Paper, Typography } from '@mui/material';
 import { formContainerStyle, formPaperStyle, formTitleStyle } from '../../styles/components/form.styles';
 
@@ -11,7 +12,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { handleLogin, handleGoogleLogin, handleNaverLogin, isLoading } = useAuth();
+  const { handleLogin, handleGoogleLogin, handleNaverLogin, handleKakaoLogin, isLoading } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +26,9 @@ export const Login = () => {
   };
 
   return (
-    <Container 
-      component="main" 
-      maxWidth="md" 
+    <Container
+      component="main"
+      maxWidth="md"
       sx={formContainerStyle}
     >
       <Paper
@@ -64,16 +65,31 @@ export const Login = () => {
               회원가입
             </AuthButton>
           </ButtonGroup>
-          <SocialLoginGroup>
-            <GoogleButton type="button" onClick={handleGoogleLogin} disabled={isLoading}>
-              <GoogleIcon src={google_icon} alt="google icon" />
-              구글 로그인
+          <SocialButtonGroup>
+            <GoogleButton 
+              type="button" 
+              onClick={handleGoogleLogin} 
+              disabled={isLoading}>
+              <div className="button-content">
+                <img src={google_icon} alt="google icon" />
+                <span>구글 로그인</span>
+              </div>
             </GoogleButton>
-            <NaverButton type="button" onClick={handleNaverLogin} disabled={isLoading}>
-              <NaverIcon src={naver_icon} alt="naver icon" />
-              네이버 로그인
+            <KakaoButton
+              type="button"
+              onClick={handleKakaoLogin}
+              disabled={isLoading}
+            >
+              <img src={kakao_icon} alt="카카오 로그인" />
+            </KakaoButton>
+            <NaverButton 
+              type="button" 
+              onClick={handleNaverLogin} 
+              disabled={isLoading}
+            >
+              <img src={naver_icon} alt="네이버 로그인" />
             </NaverButton>
-          </SocialLoginGroup>
+          </SocialButtonGroup>
         </LoginForm>
       </Paper>
     </Container>
@@ -114,12 +130,6 @@ const ButtonGroup = styled.div`
   margin-bottom: 10px;
 `;
 
-const SocialLoginGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
 const AuthButton = styled.button`
   flex: 1;
   padding: 12px;
@@ -141,30 +151,79 @@ const AuthButton = styled.button`
   }
 `;
 
-const GoogleButton = styled(AuthButton)`
-  width: 100%;
+const SocialButtonGroup = styled(ButtonGroup)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const SocialButton = styled.button`
+  width: 47%;
+  height: 45px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const GoogleButton = styled(SocialButton)`
+  background-color: lightgray;
+  border: none;
+  color: #1f1f1f;
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  img {
+    height: 20px;
+    margin-right: 12px;
+    width: 20px;
+  }
+
+  span {
+    font-weight: 500;
+  }
+`;
+
+const KakaoButton = styled(SocialButton)`
+  padding: 0;
+  border: none;
+  background: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 `;
 
-const NaverButton = styled(AuthButton)`
-  width: 100%;
+const NaverButton = styled(SocialButton)`
+  padding: 0;
+  border: none;
+  background: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-`;
+  overflow: hidden;
 
-const GoogleIcon = styled.img`
-  width: 20px;
-  height: 20px;
-`;
-
-const NaverIcon = styled.img`
-  width: 20px;
-  height: 20px;
+  img {
+    width: 100%;
+  }
 `;
 
 export default Login;
