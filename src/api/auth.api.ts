@@ -56,6 +56,18 @@ export const authService = {
       console.error('Logout request failed:', error);
       throw error;
     }
+  },
+
+  async deleteAccount(userId: string): Promise<void> {
+    try {
+      if (!userId) {
+        throw new Error('사용자 ID가 없습니다.');
+      }
+      await axiosInstance.delete(`/users/${userId}`);
+    } catch (error) {
+      console.error('Account deletion failed:', error);
+      throw error;
+    }
   }
 };
 

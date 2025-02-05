@@ -17,6 +17,8 @@ import { getDepartments } from '../../api/department.api';
 import { User } from '../../types/user.types';
 import { Department } from '../../types/department.types';
 import { useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { authService } from '../../api/auth.api';
 
 const MyPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -65,6 +67,30 @@ const MyPage = () => {
     } catch (error) {
       console.error('회원정보 수정 실패:', error);
       alert('회원정보 수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user?._id) {
+      alert('사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    const isConfirmed = window.confirm(
+      '정말로 탈퇴하시겠습니까?\n탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.'
+    );
+
+    if (isConfirmed) {
+      try {
+        await authService.deleteAccount(user._id);
+        // 토큰 삭제 및 로그아웃 처리
+        localStorage.removeItem('accessToken');
+        alert('회원 탈퇴가 완료되었습니다.');
+        navigate('/', { replace: true });  // 뒤로가기 방지
+      } catch (error) {
+        console.error('회원 탈퇴 실패:', error);
+        alert('회원 탈퇴 처리 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -202,6 +228,23 @@ const MyPage = () => {
             </Box>
           </Stack>
         </form>
+
+        <Box sx={{ mt: 4, borderTop: '1px solid #eee', pt: 3 }}>
+          <Typography variant="h6" color="error" gutterBottom>
+            계정 삭제
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
+          </Typography>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDeleteAccount}
+            startIcon={<DeleteIcon />}
+          >
+            회원 탈퇴
+          </Button>
+        </Box>
       </Paper>
     </Container>
   );
