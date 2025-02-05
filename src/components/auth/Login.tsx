@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import google_icon from '@/assets/images/google_icon.png';
+import naver_icon from '@/assets/images/naver_icon.png';
 import kakao_icon from '@/assets/images/kakao_icon.png';
 import { Container, Paper, Typography } from '@mui/material';
 import { formContainerStyle, formPaperStyle, formTitleStyle } from '../../styles/components/form.styles';
@@ -11,7 +12,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { handleLogin, handleGoogleLogin, handleKakaoLogin, isLoading } = useAuth();
+  const { handleLogin, handleGoogleLogin, handleNaverLogin, handleKakaoLogin, isLoading } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +26,9 @@ export const Login = () => {
   };
 
   return (
-    <Container 
-      component="main" 
-      maxWidth="md" 
+    <Container
+      component="main"
+      maxWidth="md"
       sx={formContainerStyle}
     >
       <Paper
@@ -65,19 +66,29 @@ export const Login = () => {
             </AuthButton>
           </ButtonGroup>
           <SocialButtonGroup>
-            <GoogleButton type="button" onClick={handleGoogleLogin} disabled={isLoading}>
+            <GoogleButton 
+              type="button" 
+              onClick={handleGoogleLogin} 
+              disabled={isLoading}>
               <div className="button-content">
                 <img src={google_icon} alt="google icon" />
                 <span>구글 로그인</span>
               </div>
             </GoogleButton>
-            <KakaoButton 
-              type="button" 
-              onClick={handleKakaoLogin} 
+            <KakaoButton
+              type="button"
+              onClick={handleKakaoLogin}
               disabled={isLoading}
             >
               <img src={kakao_icon} alt="카카오 로그인" />
             </KakaoButton>
+            <NaverButton 
+              type="button" 
+              onClick={handleNaverLogin} 
+              disabled={isLoading}
+            >
+              <img src={naver_icon} alt="네이버 로그인" />
+            </NaverButton>
           </SocialButtonGroup>
         </LoginForm>
       </Paper>
@@ -166,12 +177,11 @@ const SocialButton = styled.button`
 `;
 
 const GoogleButton = styled(SocialButton)`
-  background-color: white;
-  border: 1px solid #747775;
+  background-color: lightgray;
+  border: none;
   color: #1f1f1f;
   font-family: 'Roboto', arial, sans-serif;
   font-size: 14px;
-  padding: 0 12px;
 
   .button-content {
     display: flex;
@@ -198,6 +208,22 @@ const KakaoButton = styled(SocialButton)`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+`;
+
+const NaverButton = styled(SocialButton)`
+  padding: 0;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+  }
 `;
 
 export default Login;

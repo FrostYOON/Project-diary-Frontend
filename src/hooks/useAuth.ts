@@ -46,6 +46,10 @@ export const useAuth = () => {
     window.location.href = `${API_BASE_URL}/auth/login/google`;
   };
 
+  const handleNaverLogin = () => {
+    window.location.href = `${API_BASE_URL}/auth/login/naver`;
+  };
+
   const handleKakaoLogin = () => {
     window.location.href = `${API_BASE_URL}/auth/login/kakao`;
   };
@@ -55,6 +59,7 @@ export const useAuth = () => {
     error,
     handleLogin,
     handleGoogleLogin,
+    handleNaverLogin,
     handleKakaoLogin,
   };
 }; 
