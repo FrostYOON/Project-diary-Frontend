@@ -20,6 +20,9 @@ export interface AuthResponse {
     user: {
       id: string;
       email: string;
+      name: string;
+      role: string;
+      department: string;
       // ... 기타 사용자 정보 필드
     };
   };

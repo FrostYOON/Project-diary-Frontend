@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_BASE_URL } from './config';
 
 export const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || 'http://localhost:3001/api/v1',
   timeout: 5000,
   withCredentials: true,
   headers: {
@@ -15,8 +15,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
-      const tokenValue = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-      config.headers.Authorization = tokenValue;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -30,11 +29,10 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('accessToken');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
-
-
 
 export default axiosInstance;
