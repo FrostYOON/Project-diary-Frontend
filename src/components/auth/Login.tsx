@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import google_icon from '@/assets/images/google_icon.png';
+import naver_icon from '@/assets/images/naver_icon.png';
 import { Container, Paper, Typography } from '@mui/material';
 import { formContainerStyle, formPaperStyle, formTitleStyle } from '../../styles/components/form.styles';
 
@@ -10,7 +11,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { handleLogin, handleGoogleLogin, isLoading } = useAuth();
+  const { handleLogin, handleGoogleLogin, handleNaverLogin, isLoading } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,10 +64,16 @@ export const Login = () => {
               회원가입
             </AuthButton>
           </ButtonGroup>
-          <GoogleButton type="button" onClick={handleGoogleLogin} disabled={isLoading}>
-            <GoogleIcon src={google_icon} alt="google icon" />
-            구글 로그인
-          </GoogleButton>
+          <SocialLoginGroup>
+            <GoogleButton type="button" onClick={handleGoogleLogin} disabled={isLoading}>
+              <GoogleIcon src={google_icon} alt="google icon" />
+              구글 로그인
+            </GoogleButton>
+            <NaverButton type="button" onClick={handleNaverLogin} disabled={isLoading}>
+              <NaverIcon src={naver_icon} alt="naver icon" />
+              네이버 로그인
+            </NaverButton>
+          </SocialLoginGroup>
         </LoginForm>
       </Paper>
     </Container>
@@ -107,6 +114,12 @@ const ButtonGroup = styled.div`
   margin-bottom: 10px;
 `;
 
+const SocialLoginGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
 const AuthButton = styled.button`
   flex: 1;
   padding: 12px;
@@ -136,7 +149,20 @@ const GoogleButton = styled(AuthButton)`
   gap: 10px;
 `;
 
+const NaverButton = styled(AuthButton)`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+`;
+
 const GoogleIcon = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
+const NaverIcon = styled.img`
   width: 20px;
   height: 20px;
 `;

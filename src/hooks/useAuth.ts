@@ -46,10 +46,15 @@ export const useAuth = () => {
     window.location.href = `${API_BASE_URL}/auth/login/google`;
   };
 
+  const handleNaverLogin = () => {
+    window.location.href = `${API_BASE_URL}/auth/login/naver`;
+  };
+
   return {
     isLoading,
     error,
     handleLogin,
     handleGoogleLogin,
+    handleNaverLogin,
   };
 }; 
