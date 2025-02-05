@@ -34,12 +34,17 @@ export const authService = {
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials);
+      const response = await axiosInstance.post('/auth/login', {
+        email: credentials.email,
+        password: credentials.password
+      });
+      
+      if (response.data.accessToken) {
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.accessToken}`;
+      }
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw new Error(error.response.data.message || '로그인에 실패했습니다.');
-      }
+      console.error('Login request:', error);
       throw error;
     }
   }
