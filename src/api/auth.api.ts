@@ -47,6 +47,15 @@ export const authService = {
       console.error('Login request:', error);
       throw error;
     }
+  },
+
+  async logout(): Promise<void> {
+    try {
+      await axiosInstance.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout request failed:', error);
+      throw error;
+    }
   }
 };
 

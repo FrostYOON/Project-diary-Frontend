@@ -33,6 +33,7 @@ import {
   logoSectionStyle,
   mainMenuSectionStyle
 } from '../../styles/components/navbar.styles';
+import { authService } from '../../api/auth.api';
 
 interface NavbarProps {
   onOpenChange: (open: boolean) => void;
@@ -56,10 +57,18 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
     onOpenChange(open);
   }, [open, onOpenChange]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    setIsLoggedIn(false);
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem('accessToken');
+      await authService.logout();  // 서버에 로그아웃 요청
+      setIsLoggedIn(false);
+      navigate('/');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+      // 실패해도 일단 로그아웃 처리
+      setIsLoggedIn(false);
+      navigate('/');
+    }
   };
 
   const mainMenuItems = [
