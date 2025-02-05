@@ -6,6 +6,7 @@ export interface User {
   phone: string;
   birth: string;
   registerType?: 'normal' | 'google';
+  profileImage?: string;
   // ... other fields ...
 }
 
