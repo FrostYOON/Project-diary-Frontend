@@ -46,10 +46,15 @@ export const useAuth = () => {
     window.location.href = `${API_BASE_URL}/auth/login/google`;
   };
 
+  const handleKakaoLogin = () => {
+    window.location.href = `${API_BASE_URL}/auth/login/kakao`;
+  };
+
   return {
     isLoading,
     error,
     handleLogin,
     handleGoogleLogin,
+    handleKakaoLogin,
   };
 }; 
