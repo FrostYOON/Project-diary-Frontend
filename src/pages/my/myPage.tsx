@@ -105,27 +105,22 @@ const MyPage = () => {
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
-
+    if (!file || !user) return;
     try {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('파일 크기는 5MB 이하여야 합니다.');
-        return;
-      }
-
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        return;
-      }
-
-      const updatedUser = await updateProfileImage(file);
-      setUser(updatedUser);
+      const imageUrl = await updateProfileImage(file);
+      setUser({ ...user, profileImage: imageUrl });
       alert('프로필 이미지가 업데이트되었습니다.');
     } catch (error) {
       console.error('프로필 이미지 업로드 실패:', error);
       alert('프로필 이미지 업로드에 실패했습니다.');
     }
   };
+
+  const imageUrl = user?.profileImage 
+    ? `${user.profileImage}`
+    : default_profile;
+
+  console.log('Full Image URL:', imageUrl);  // URL 확인용
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -137,8 +132,8 @@ const MyPage = () => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
           <Box sx={{ position: 'relative' }}>
             <Avatar
-              src={user?.profileImage || default_profile}
-              alt="프로필 이미지"
+              src={imageUrl}
+              alt={user?.name || '프로필 이미지'}
               sx={{
                 width: 120,
                 height: 120,
