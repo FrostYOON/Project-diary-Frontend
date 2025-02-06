@@ -167,8 +167,6 @@ const TaskTable = ({ tasks = [], onEdit, loading }: TaskTableProps) => {
     },
   ];
 
-  console.log(tasks)
-
   return (
     <Box sx={{ width: "100%", height: "calc(100vh - 140px)" }}>
       <DataGrid
