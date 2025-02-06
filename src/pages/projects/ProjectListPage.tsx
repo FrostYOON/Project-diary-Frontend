@@ -1,20 +1,20 @@
-import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, LinearProgress, Typography, Chip } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import { getProjects } from '../../api/project.api';
-import { getUserRole } from '../../api/user.api';
-import { Project } from '../../types/project.types';
-import CreateProjectModal from '../../components/projects/CreateProjectModal';
-import ProjectUpdateModal from '../../components/projects/ProjectUpdateModal';
-import { retryRequest } from '../../utils/api.utils';
-import { 
-  projectListHeaderStyle, 
-  projectTitleStyle, 
-  projectButtonContainerStyle 
-} from '../../styles/pages/project.styles';
-import { primaryButtonStyle } from '../../styles/common/buttons';
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, LinearProgress, Typography, Chip } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import AddIcon from "@mui/icons-material/Add";
+import { getProjects } from "../../api/project.api";
+import { getUserRole } from "../../api/user.api";
+import { Project } from "../../types/project.types";
+import CreateProjectModal from "../../components/projects/CreateProjectModal";
+import ProjectUpdateModal from "../../components/projects/ProjectUpdateModal";
+import { retryRequest } from "../../utils/api.utils";
+import {
+  projectListHeaderStyle,
+  projectTitleStyle,
+  projectButtonContainerStyle,
+} from "../../styles/pages/project.styles";
+import { primaryButtonStyle } from "../../styles/common/buttons";
 
 const ProjectListPage = () => {
   const navigate = useNavigate();
@@ -23,20 +23,20 @@ const ProjectListPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [userRole, setUserRole] = useState<string>('');
+  const [userRole, setUserRole] = useState<string>("");
 
   const fetchInitialData = useCallback(async () => {
     try {
       setIsLoading(true);
       const [projects, role] = await Promise.all([
         retryRequest(getProjects),
-        getUserRole()
+        getUserRole(),
       ]);
 
       setProjects(projects);
       setUserRole(role);
     } catch (error) {
-      console.error('데이터 로딩 실패:', error);
+      console.error("데이터 로딩 실패:", error);
       setProjects([]);
     } finally {
       setIsLoading(false);
@@ -44,42 +44,37 @@ const ProjectListPage = () => {
   }, []);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
     fetchInitialData();
   }, [navigate, fetchInitialData]);
 
-
   const formatDate = (dateString: string) => {
-    if (!dateString) return '-';
+    if (!dateString) return "-";
     try {
       return new Date(dateString).toLocaleDateString();
     } catch {
-      return '-';
+      return "-";
     }
   };
 
   const columns: GridColDef[] = [
     {
-      field: 'title',
-      headerName: '프로젝트명',
+      field: "title",
+      headerName: "프로젝트명",
       flex: 1,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
       renderCell: (params) => (
         <div
-          style={{ 
-            cursor: 'pointer',
-            color: '#F4A261'
-          }}
-          onClick={() => {
-            setSelectedProject(params.row);
-            setIsUpdateModalOpen(true);
+          style={{
+            cursor: "pointer",
+            color: "#F4A261",
           }}
         >
           {params.value}
@@ -87,43 +82,47 @@ const ProjectListPage = () => {
       ),
     },
     {
-      field: 'department',
-      headerName: '담당 부서',
+      field: "department",
+      headerName: "담당 부서",
       flex: 1,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
       renderCell: (params) => {
         const department = params.value;
-        if (department && typeof department === 'object' && 'name' in department) {
+        if (
+          department &&
+          typeof department === "object" &&
+          "name" in department
+        ) {
           return department.name;
         }
-        return '';
-      }
-    },
-    { 
-      field: 'startDate', 
-      headerName: '시작일', 
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => formatDate(params.value)
-    },
-    { 
-      field: 'endDate', 
-      headerName: '종료일', 
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => formatDate(params.value)
+        return "";
+      },
     },
     {
-      field: 'remainingDays',
-      headerName: '잔여일',
+      field: "startDate",
+      headerName: "시작일",
       flex: 1,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => formatDate(params.value),
+    },
+    {
+      field: "endDate",
+      headerName: "종료일",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => formatDate(params.value),
+    },
+    {
+      field: "remainingDays",
+      headerName: "잔여일",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
       renderCell: ({ row }: { row: Project }) => {
-        if (!row?.endDate) return '';
+        if (!row?.endDate) return "";
         const endDate = new Date(row.endDate);
         const today = new Date();
         const diffTime = endDate.getTime() - today.getTime();
@@ -131,25 +130,25 @@ const ProjectListPage = () => {
 
         if (diffDays < 0) {
           return (
-            <Chip 
-              label="만료" 
+            <Chip
+              label="만료"
               size="small"
-              sx={{ 
-                backgroundColor: '#ff4d4f',
-                color: 'white',
-                fontWeight: 500
+              sx={{
+                backgroundColor: "#ff4d4f",
+                color: "white",
+                fontWeight: 500,
               }}
             />
           );
         } else if (diffDays <= 1) {
           return (
-            <Chip 
-              label="마감임박" 
+            <Chip
+              label="마감임박"
               size="small"
-              sx={{ 
-                backgroundColor: '#faad14',
-                color: 'white',
-                fontWeight: 500
+              sx={{
+                backgroundColor: "#faad14",
+                color: "white",
+                fontWeight: 500,
               }}
             />
           );
@@ -159,27 +158,27 @@ const ProjectListPage = () => {
       },
     },
     {
-      field: 'progress',
-      headerName: '진행률',
+      field: "progress",
+      headerName: "진행률",
       flex: 1,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
       renderCell: ({ row }: { row: Project }) => (
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <LinearProgress 
-            variant="determinate" 
-            value={row.progress || 0} 
-            sx={{ 
-              width: '70%',
+        <Box
+          sx={{ width: "100%", display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <LinearProgress
+            variant="determinate"
+            value={row.progress || 0}
+            sx={{
+              width: "70%",
               height: 8,
-              borderRadius: 5
+              borderRadius: 5,
             }}
           />
-          <Box sx={{ minWidth: 35 }}>
-            {`${row.progress || 0}%`}
-          </Box>
+          <Box sx={{ minWidth: 35 }}>{`${row.progress || 0}%`}</Box>
         </Box>
-      )
+      ),
     },
   ];
 
@@ -199,7 +198,7 @@ const ProjectListPage = () => {
           프로젝트 목록
         </Typography>
         <Box sx={projectButtonContainerStyle}>
-          {userRole !== 'user' && (
+          {userRole !== "user" && (
             <Button
               variant="contained"
               sx={primaryButtonStyle}
@@ -211,45 +210,48 @@ const ProjectListPage = () => {
           )}
         </Box>
       </Box>
-      <Box sx={{ width: '100%', height: 'calc(100vh - 140px)' }}>
+      <Box sx={{ width: "100%", height: "calc(100vh - 140px)" }}>
         <DataGrid
           rows={projects || []}
           columns={columns}
           loading={isLoading}
           getRowId={(row: Project) => row._id}
-          onRowClick={(params) => setSelectedProject(params.row)}
+          onRowClick={(params) => {
+            setSelectedProject(params.row);
+            setIsUpdateModalOpen(true);
+          }}
           pageSizeOptions={[10, 25, 50]}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
             sorting: {
-              sortModel: [{ field: 'endDate', sort: 'asc' }],
-            }
+              sortModel: [{ field: "endDate", sort: "asc" }],
+            },
           }}
           disableRowSelectionOnClick
           disableColumnMenu
-          sx={{ 
-            bgcolor: 'white', 
+          sx={{
+            bgcolor: "white",
             borderRadius: 2,
-            width: '100%',
+            width: "100%",
             opacity: 0.9,
-            '& .MuiDataGrid-cell': {
-              borderColor: 'grey.200',
-              textAlign: 'center',
-              justifyContent: 'center'
+            "& .MuiDataGrid-cell": {
+              borderColor: "grey.200",
+              textAlign: "center",
+              justifyContent: "center",
             },
-            '& .MuiDataGrid-row:hover': {
-              cursor: 'pointer',
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            "& .MuiDataGrid-row:hover": {
+              cursor: "pointer",
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
             },
-            '& .MuiDataGrid-columnHeaders': {
-              borderRadius: '8px 8px 0 0',
-              textAlign: 'center',
+            "& .MuiDataGrid-columnHeaders": {
+              borderRadius: "8px 8px 0 0",
+              textAlign: "center",
             },
-            '& .MuiDataGrid-columnHeader': {
-              backgroundColor: '#D4A373',
-              color: '#ffffff',
-              fontWeight: 'bold',
-            }
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: "#D4A373",
+              color: "#ffffff",
+              fontWeight: "bold",
+            },
           }}
         />
       </Box>

@@ -16,6 +16,7 @@ const PersonalTaskPage = () => {
     createTask,
     updateTask,
     deleteTask,
+    refreshTasks,
   } = useTaskTable();
 
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -57,9 +58,10 @@ const PersonalTaskPage = () => {
     }
   };
 
-  const handleUpdateTask = async (data: TaskFormData) => {
+  const handleUpdateTask = async (taskId: string, data: TaskFormData) => {
     try {
-      await updateTask(selectedTask?._id || '', data);
+      await updateTask(taskId, data);
+      await refreshTasks();
       setOpenEditModal(false);
       setSelectedTask(null);
     } catch (error) {
@@ -118,9 +120,14 @@ const PersonalTaskPage = () => {
       />
       <TaskEditModal
         open={openEditModal}
-        onClose={() => setOpenEditModal(false)}
+        onClose={() => {
+          setOpenEditModal(false);
+          setSelectedTask(null);
+        }}
         task={selectedTask}
-        onSubmit={handleUpdateTask}
+        onSubmit={(data: TaskFormData) => 
+          selectedTask && handleUpdateTask(selectedTask._id, data)
+        }
         onDelete={handleDelete}
         userId={userId}
         departmentId={departmentId}
