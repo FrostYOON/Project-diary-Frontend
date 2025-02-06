@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Paper,
@@ -11,20 +11,25 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Avatar,
+  IconButton,
 } from '@mui/material';
-import { getCurrentUser, updateUserProfile } from '../../api/user.api';
+import { getCurrentUser, updateUserProfile, updateProfileImage } from '../../api/user.api';
 import { getDepartments } from '../../api/department.api';
 import { User } from '../../types/user.types';
 import { Department } from '../../types/department.types';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { authService } from '../../api/auth.api';
+import default_profile from '@/assets/images/profile_default.png';
 
 const MyPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>(user || {});
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -94,12 +99,79 @@ const MyPage = () => {
     }
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('파일 크기는 5MB 이하여야 합니다.');
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다.');
+        return;
+      }
+
+      const updatedUser = await updateProfileImage(file);
+      setUser(updatedUser);
+      alert('프로필 이미지가 업데이트되었습니다.');
+    } catch (error) {
+      console.error('프로필 이미지 업로드 실패:', error);
+      alert('프로필 이미지 업로드에 실패했습니다.');
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
           회원 정보
         </Typography>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <Box sx={{ position: 'relative' }}>
+            <Avatar
+              src={user?.profileImage || default_profile}
+              alt="프로필 이미지"
+              sx={{
+                width: 120,
+                height: 120,
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={handleImageClick}
+            />
+            <IconButton
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                },
+              }}
+              onClick={handleImageClick}
+            >
+              <PhotoCameraIcon sx={{ color: 'white' }} />
+            </IconButton>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleImageChange}
+            />
+          </Box>
+        </Box>
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
