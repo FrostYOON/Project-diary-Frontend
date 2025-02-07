@@ -8,6 +8,7 @@ import { getUserRole } from "../../api/user.api";
 import { Project } from "../../types/project.types";
 import CreateProjectModal from "../../components/projects/CreateProjectModal";
 import ProjectUpdateModal from "../../components/projects/ProjectUpdateModal";
+import DepartmentModal from "../../components/departments/departmentModal";
 import { retryRequest } from "../../utils/api.utils";
 import {
   projectListHeaderStyle,
@@ -21,6 +22,7 @@ const ProjectListPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDepartmentModalOpen, setIsDepartmentModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
@@ -182,6 +184,10 @@ const ProjectListPage = () => {
     },
   ];
 
+  const handleDepartmentSuccess = () => {
+    fetchInitialData();
+  };
+
   const handleCreateSuccess = () => {
     fetchInitialData();
   };
@@ -198,6 +204,16 @@ const ProjectListPage = () => {
           프로젝트 목록
         </Typography>
         <Box sx={projectButtonContainerStyle}>
+          {userRole === "admin" && (
+            <Button
+              variant="contained"
+              sx={primaryButtonStyle}
+              startIcon={<AddIcon />}
+              onClick={() => setIsDepartmentModalOpen(true)}
+            >
+              부서 관리
+            </Button>
+          )}
           {userRole !== "user" && (
             <Button
               variant="contained"
@@ -255,6 +271,11 @@ const ProjectListPage = () => {
           }}
         />
       </Box>
+      <DepartmentModal
+        open={isDepartmentModalOpen}
+        onClose={() => setIsDepartmentModalOpen(false)}
+        onSuccess={handleDepartmentSuccess}
+      />
       <CreateProjectModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
