@@ -135,8 +135,12 @@ const ProjectUpdateModal = ({ open, onClose, project, onSuccess, userRole }: Pro
   };
 
   const handleMemberChange = (event: SelectChangeEvent<string[]>) => {
-    const { value } = event.target;
-    setSelectedMembers(typeof value === 'string' ? [value] : value);
+    const value = event.target.value;  // 이미 string[] 타입
+    setSelectedMembers(value as string[]);
+    setFormData(prev => ({
+      ...prev,
+      members: value as string[]
+    }));
   };
 
   return (

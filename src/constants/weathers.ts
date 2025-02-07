@@ -2,6 +2,7 @@
 export const CITY_NAME_KR: Record<string, string> = {
   'Seoul': '서울',
   'Incheon': '인천',
+  'Gunpo': '군포',
   'Suwon': '수원',
   'Seongnam': '성남',
   'Goyang': '고양',

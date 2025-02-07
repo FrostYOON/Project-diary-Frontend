@@ -63,17 +63,17 @@ const Navbar = ({ onOpenChange }: NavbarProps) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await getCurrentUser();
-        setUser(userData);
+        if (isLoggedIn) {
+          const userData = await getCurrentUser();
+          setUser(userData);
+        }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
       }
     };
 
-    if (isLoggedIn) {
-      fetchUser();
-    }
-  }, [isLoggedIn]);
+    fetchUser();
+  }, [isLoggedIn, location]);  // location 의존성 추가하여 페이지 변경시마다 갱신
 
   const handleLogout = async () => {
     try {

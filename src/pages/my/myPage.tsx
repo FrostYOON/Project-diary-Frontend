@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Paper,
@@ -11,21 +11,27 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Avatar,
+  IconButton,
 } from '@mui/material';
-import { getCurrentUser, updateUserProfile } from '../../api/user.api';
+import { getCurrentUser, updateUserProfile, updateProfileImage } from '../../api/user.api';
 import { getDepartments } from '../../api/department.api';
 import { User } from '../../types/user.types';
 import { Department } from '../../types/department.types';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { authService } from '../../api/auth.api';
+import default_profile from '@/assets/images/profile_default.png';
 
 const MyPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>(user || {});
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [imageKey, setImageKey] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,12 +100,95 @@ const MyPage = () => {
     }
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    try {
+      await updateProfileImage(file);
+      const updatedUser = await getCurrentUser();
+      setUser(updatedUser);
+      setImageKey(prev => prev + 1);
+      alert('프로필 이미지가 업데이트되었습니다.');
+    } catch (error) {
+      console.error('프로필 이미지 업로드 실패:', error);
+      alert('프로필 이미지 업로드에 실패했습니다.');
+    }
+  };
+
+  const imageUrl = user?.profileImage 
+    ? `${user.profileImage}`
+    : default_profile;
+
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
+    <Container 
+      maxWidth="md" 
+      sx={{ 
+        mt: 2, 
+        mb: 2,
+        height: 'calc(100vh - 140px)',  // 화면 높이에서 헤더/푸터 높이 제외
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
+      }}
+    >
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4, 
+          borderRadius: 2,
+          maxHeight: '90vh',  // 최대 높이 설정
+          overflow: 'hidden',   // 내용이 넘칠 경우 스크롤
+          margin: 'auto'      // 중앙 정렬
+        }}
+      >
+        <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 1 }}>
           회원 정보
         </Typography>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+          <Box sx={{ position: 'relative' }}>
+            <Avatar
+              key={imageKey}
+              src={imageUrl}
+              alt={user?.name || '프로필 이미지'}
+              sx={{
+                width: 120,
+                height: 120,
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={handleImageClick}
+            />
+            <IconButton
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                },
+              }}
+              onClick={handleImageClick}
+            >
+              <PhotoCameraIcon sx={{ color: 'white' }} />
+            </IconButton>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleImageChange}
+            />
+          </Box>
+        </Box>
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
@@ -229,11 +318,11 @@ const MyPage = () => {
           </Stack>
         </form>
 
-        <Box sx={{ mt: 4, borderTop: '1px solid #eee', pt: 3 }}>
+        <Box sx={{ mt: 1, borderTop: '1px solid #eee', pt: 1 }}>
           <Typography variant="h6" color="error" gutterBottom>
             계정 삭제
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
           </Typography>
           <Button
