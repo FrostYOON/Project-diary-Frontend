@@ -15,5 +15,6 @@ export const projectTitleStyle: SxProps = {
 export const projectButtonContainerStyle: SxProps = {
   flex: 1,
   display: 'flex',
-  justifyContent: 'flex-end'
+  justifyContent: 'flex-end',
+  gap: 1
 }; 

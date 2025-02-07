@@ -57,3 +57,29 @@ export const getUserRole = async (): Promise<string> => {
     throw error;
   }
 };
+
+export const updateProfileImage = async (imageFile: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+
+    const response = await axiosInstance.post<{ success: boolean; data: string; message: string }>(
+      '/users/me/profileImage',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || '프로필 이미지 업로드에 실패했습니다.');
+    }
+
+    return response.data.data;
+  } catch (error) {
+    console.error('프로필 이미지 업로드 실패:', error);
+    throw error;
+  }
+};

@@ -16,7 +16,10 @@ const formatDate = (dateString: string) => {
   return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}.`;
 };
 
-const TaskTable = ({ tasks, loading, onEdit }: TaskTableProps) => {
+const TaskTable = ({ tasks = [], onEdit, loading }: TaskTableProps) => {
+  // 유효한 _id를 가진 tasks만 필터링
+  const validRows = tasks.filter(task => task && task._id);
+
   const columns: GridColDef[] = [
     {
       field: "project",
@@ -167,7 +170,7 @@ const TaskTable = ({ tasks, loading, onEdit }: TaskTableProps) => {
   return (
     <Box sx={{ width: "100%", height: "calc(100vh - 140px)" }}>
       <DataGrid
-        rows={tasks}
+        rows={validRows || []}
         columns={columns}
         loading={loading}
         getRowId={(row: Task) => row._id}
