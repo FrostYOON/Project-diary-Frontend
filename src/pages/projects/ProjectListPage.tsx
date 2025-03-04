@@ -31,7 +31,11 @@ const ProjectListPage = () => {
     try {
       setIsLoading(true);
       const [projects, role] = await Promise.all([
-        retryRequest(getProjects),
+        retryRequest(getProjects, {
+          maxRetries: 3,
+          delayMs: 2000,
+          backoffFactor: 2
+        }),
         getUserRole(),
       ]);
 
